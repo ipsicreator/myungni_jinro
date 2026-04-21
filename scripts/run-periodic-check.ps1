@@ -21,8 +21,15 @@ try {
   & "powershell.exe" -ExecutionPolicy Bypass -File ".\scripts\qa-release.ps1" 2>&1 | Tee-Object -FilePath $reportPath -Append
   $releaseExitCode = $LASTEXITCODE
   if ($releaseExitCode -eq 0) {
-    Write-Log "Result: PASS"
-    exit 0
+    Write-Log "Run: scripts/qa-vercel-smoke.mjs"
+    & "C:\Program Files\nodejs\node.exe" ".\scripts\qa-vercel-smoke.mjs" 2>&1 | Tee-Object -FilePath $reportPath -Append
+    $vercelExitCode = $LASTEXITCODE
+    if ($vercelExitCode -eq 0) {
+      Write-Log "Result: PASS"
+      exit 0
+    }
+    Write-Log "Vercel smoke failed."
+    exit 1
   }
 
   Write-Log "Release QA failed. Run auto-fix sequence."
