@@ -5,14 +5,6 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { buildReport, loadAnswersFromStorage, loadFormFromStorage, PRISM_QUESTIONS } from "@/lib/prismData";
 
-type ReportPageItem = {
-  pageNo: number;
-  title: string;
-  subtitle: string;
-  paragraphs: string[];
-  highlights?: string[];
-};
-
 type IlsDimension = {
   key: string;
   left: string;
@@ -20,6 +12,14 @@ type IlsDimension = {
   diff: number;
   favored: string;
   level: string;
+};
+
+type ReportPageItem = {
+  pageNo: number;
+  title: string;
+  subtitle: string;
+  paragraphs: string[];
+  visual?: "ilsChart" | "mathFlow" | "scienceMap" | "roadmap";
 };
 
 function toIlsLevel(diff: number): string {
@@ -32,6 +32,93 @@ function clampIlsDiff(value: number): number {
   return Math.max(1, Math.min(11, value));
 }
 
+function IlsChart({ ils }: { ils: IlsDimension[] }) {
+  return (
+    <div className="rounded-lg border border-[#d8dfec] bg-white p-4">
+      <p className="text-lg font-bold text-[#1f326a]">ILS 4차원 차트</p>
+      <div className="mt-3 grid gap-3">
+        {ils.map((item) => {
+          const width = `${Math.round((item.diff / 11) * 100)}%`;
+          return (
+            <div key={item.key}>
+              <p className="text-sm font-semibold text-[#324d84]">
+                {item.left} ↔ {item.right} (우세: {item.favored})
+              </p>
+              <div className="mt-1 h-3 rounded-full bg-[#e8edf6]">
+                <div className="h-3 rounded-full bg-[#20397d]" style={{ width }} />
+              </div>
+              <p className="mt-1 text-xs text-[#5f7097]">점수차 {item.diff} / 해석: {item.level}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MathFlowVisual() {
+  return (
+    <div className="rounded-lg border border-[#d8dfec] bg-white p-4">
+      <p className="text-lg font-bold text-[#1f326a]">수학 3단계 전략 구조도</p>
+      <div className="mt-3 grid grid-cols-3 gap-3 text-center">
+        {["조건 추출", "도구 선택", "연산 수행"].map((step, idx) => (
+          <div key={step} className="rounded-lg border border-[#d4ddec] bg-[#f8faff] p-3">
+            <p className="text-xs font-bold text-[#6d7da1]">STEP {idx + 1}</p>
+            <p className="mt-1 text-base font-bold text-[#243f75]">{step}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScienceMapVisual() {
+  return (
+    <div className="rounded-lg border border-[#d8dfec] bg-white p-4">
+      <p className="text-lg font-bold text-[#1f326a]">과학 인과관계 도식화 예시</p>
+      <svg viewBox="0 0 800 220" className="mt-2 w-full">
+        <rect x="20" y="80" width="180" height="60" rx="12" fill="#f7f9ff" stroke="#cfd9ea" />
+        <text x="110" y="115" textAnchor="middle" fill="#1f326a" fontSize="18" fontWeight="700">현상 관찰</text>
+        <rect x="310" y="80" width="180" height="60" rx="12" fill="#f7f9ff" stroke="#cfd9ea" />
+        <text x="400" y="115" textAnchor="middle" fill="#1f326a" fontSize="18" fontWeight="700">원리 분해</text>
+        <rect x="600" y="80" width="180" height="60" rx="12" fill="#f7f9ff" stroke="#cfd9ea" />
+        <text x="690" y="115" textAnchor="middle" fill="#1f326a" fontSize="18" fontWeight="700">수식 모델링</text>
+        <path d="M205 110 L300 110" stroke="#c8922a" strokeWidth="4" markerEnd="url(#arrow)" />
+        <path d="M495 110 L590 110" stroke="#c8922a" strokeWidth="4" markerEnd="url(#arrow)" />
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0,0 10,4 0,8" fill="#c8922a" />
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
+function RoadmapVisual() {
+  return (
+    <div className="rounded-lg border border-[#d8dfec] bg-white p-4">
+      <p className="text-lg font-bold text-[#1f326a]">6년 통합 로드맵</p>
+      <div className="mt-3 grid gap-2">
+        {["초등 고학년: 시각적 도식화 노트 습관", "중등: 안전한 실패 5회 이상 축적", "고등: 심화 탐구 결과물 산출"].map((line, idx) => (
+          <div key={line} className="flex items-center gap-2 rounded-md border border-[#d3dceb] bg-[#f8faff] px-3 py-2">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-[#20397d] text-xs font-bold text-white">{idx + 1}</span>
+            <p className="text-sm font-semibold text-[#284577]">{line}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VisualBlock({ kind, ils }: { kind: ReportPageItem["visual"]; ils: IlsDimension[] }) {
+  if (kind === "ilsChart") return <IlsChart ils={ils} />;
+  if (kind === "mathFlow") return <MathFlowVisual />;
+  if (kind === "scienceMap") return <ScienceMapVisual />;
+  if (kind === "roadmap") return <RoadmapVisual />;
+  return null;
+}
+
 export default function ReportIssuePage() {
   const form = useMemo(() => loadFormFromStorage(), []);
   const answers = useMemo(() => loadAnswersFromStorage(), []);
@@ -39,10 +126,10 @@ export default function ReportIssuePage() {
 
   const safeAnswers = answers.length === PRISM_QUESTIONS.length ? answers : [4, 4, 4, 3, 4];
   const [q1, q2, q3, q4, q5] = safeAnswers;
+  const issueDate = new Date().toLocaleDateString("ko-KR");
 
   const studentName = form.studentName?.trim() || "서진영";
   const schoolName = form.schoolName?.trim() || "수프리마중학교";
-  const issueDate = new Date().toLocaleDateString("ko-KR");
 
   const ilsDimensions: IlsDimension[] = useMemo(() => {
     const processDiff = clampIlsDiff(Math.abs(q1 - q4) * 2 + 1);
@@ -90,138 +177,127 @@ export default function ReportIssuePage() {
     {
       pageNo: 1,
       title: "제1면 | 종합 진단 개요",
-      subtitle: `${studentName} 학생의 입시 DNA 프리즘 종합분석리포트`,
+      subtitle: "제 1면 : 임상 진단 결과 요약 및 총평",
       paragraphs: [
-        `${studentName} 학생은 기초 문항에서 평균 ${report.average}점을 기록했으며, 학습태도 분류는 "${report.learningType}"으로 확인되었습니다. 이는 학습 과정에서 자기 주도적 계획 수립과 근거 기반 사고가 함께 나타나는 구조를 의미합니다.`,
-        "본 리포트는 선천적 정보 처리 경향, 후천적 학습 행동, 공학 적합도 관점을 하나의 통합 프레임으로 연결해 해석합니다. 단순한 점수 나열이 아니라 실제 학습 실행 루틴으로 연결 가능한 처방형 문서를 목표로 구성했습니다.",
-        `진단일은 ${issueDate}이며, 본 문서의 모든 면은 센터 상담·코칭·학부모 안내에 바로 활용할 수 있도록 작성되었습니다.`,
-      ],
-      highlights: [
-        `학생명: ${studentName}`,
-        `학교/학년: ${schoolName} / ${form.grade}`,
-        "기질 요약: 학문 응집형(인성-관성 중심 엔진)",
-        `학습태도 요약: ${report.learningType}`,
+        `성명: ${studentName} | 진단일: ${issueDate}`,
+        `선천적(DNA) 기질: 학문 응집형 (인성-관성 중심 엔진) | 학교/학년: ${schoolName} / ${form.grade}`,
+        `후천적 학습 태도(GRSLSS): ${report.learningType} | 인지 처리 경로(ILS): 숙고·직관·시각·순차형`,
+        `${studentName} 학생은 정보를 정교하게 수용하고 규범을 준수하려는 선천적 인지 엔진을 바탕으로, 후천적으로 독립적 사고를 구축한 유형입니다. 현재의 학습 정체는 역량 부족이 아니라 높은 독립성이 체계적 출력 시스템과 만나지 못해 발생하는 인지적 병목 구간으로 해석됩니다.`,
       ],
     },
     {
       pageNo: 2,
-      title: "제2면 | 선천 기질 해석",
-      subtitle: "정보 수용 엔진과 사고 밀도의 구조",
+      title: "제2면 | 선천적(DNA) 기질 분석",
+      subtitle: "제 2~3면 : 선천적 기질과 후천적 성격의 결합 분석",
       paragraphs: [
-        "해당 기질은 빠른 반응보다 구조화된 이해를 선호하고, 한 번 받아들인 정보는 장기 기억으로 전환하려는 경향이 강합니다. 그래서 '양'보다 '깊이'를 확보할 때 성과가 안정적으로 올라갑니다.",
-        "학습 초반에는 속도가 느려 보일 수 있으나, 이해 임계점을 넘는 순간 재현성과 정확도가 크게 상승합니다. 이 구간을 의도적으로 설계하지 않으면 능력이 낮아서가 아니라 실행 구조 부재로 성과가 지연될 수 있습니다.",
-        "따라서 단기 과제에서도 단순 암기보다 개념-근거-적용 순서의 루틴을 고정하는 것이 효율적입니다.",
+        "학생의 선천적 엔진은 지식을 깊게 수용하고 내면화하는 인성(NP) 에너지와 정해진 규칙을 준수하려는 관성(CP) 에너지가 핵심 축입니다.",
+        "한 번 수용된 정보는 쉽게 휘발되지 않고 장기 기억으로 전이되며, 논리적 인과관계가 선명할 때 인지 가동률이 극대화됩니다.",
+        "이러한 선천적 신중함과 응축력은 학습의 깊이를 담보하는 강력한 자산입니다.",
       ],
     },
     {
       pageNo: 3,
-      title: "제3면 | 성격 결합 심화 해석",
-      subtitle: "독립성·협업성의 균형과 출력 전환",
+      title: "제3면 | 후천적 학습 태도 결합",
+      subtitle: "독립형 기질과 숙고형 경향의 결합",
       paragraphs: [
-        `문항 응답 기준으로 독립 실행 강도는 ${q1 >= 4 ? "높은 수준" : "보통 수준"}이며, 협업 장면에서는 자기 기준을 유지하면서 조율하는 패턴이 관찰됩니다.`,
-        "이 패턴은 혼자 할 때 강점이 극대화되지만, 팀 과제에서는 의사결정 기준을 명시하지 않으면 피로가 누적될 수 있습니다. 즉, 협업 부적합이 아니라 역할 정의의 명확도가 핵심 변수입니다.",
-        "성과 전환의 핵심은 '혼자 공부한다'가 아니라 '혼자 구조화하고, 필요한 지점에서 피드백만 연결한다'는 하이브리드 방식입니다.",
+        `후천적 독립성은 현재 ${report.average}점 평균 응답에서 확인되며, 타인의 지시를 수동적으로 따르기보다 스스로 납득 가능한 근거를 확보할 때 에너지가 상승합니다.`,
+        "완벽히 이해하지 못한 지식은 자기 것으로 인정하지 않는 특성이 있어, 심화 학습에서는 강점이 되지만 주입식 환경에서는 병목으로 작동할 수 있습니다.",
+        "따라서 독립형의 장점을 살리는 자기 주도형 재구축 루틴이 필수입니다.",
       ],
     },
     {
       pageNo: 4,
-      title: "제4면 | 기본 정보",
-      subtitle: "진단 대상자 메타데이터",
+      title: "제4면 | 수학 영역 정밀 처방",
+      subtitle: "제 4~5면 : 과목별 정밀 학습 처방 (수학·과학)",
       paragraphs: [
-        `학교/학년: ${schoolName} / ${form.grade}`,
-        `계열: ${form.track} | 성별: ${form.gender}`,
-        `출생 정보: ${form.birthDate} ${form.birthTime}`,
-        `학생 연락처: ${form.studentPhone} | 보호자 연락처: ${form.parentPhone}`,
-        "기본 정보는 상담 기록 및 후속 코칭 단계의 기준 키로 사용됩니다.",
+        "수학은 단순 연산이 아니라 논리적 인과관계의 정밀 추적으로 접근해야 합니다.",
+        "모든 수학 문항을 [조건 추출 - 도구 선택 - 연산 수행] 3단계로 고정하면 논리 단절을 막고 풀이 무결성을 확보할 수 있습니다.",
+        "고난도 문항에서는 선 구조(개념도/조건도식), 후 풀이 전략이 효율적입니다.",
       ],
+      visual: "mathFlow",
     },
     {
       pageNo: 5,
-      title: "제5면 | 문항 응답 상세",
-      subtitle: "1차 기질 문항 원점수",
+      title: "제5면 | 과학 영역 정밀 처방",
+      subtitle: "시스템 이해와 도식적 재구성",
       paragraphs: [
-        `1) ${PRISM_QUESTIONS[0]} → ${q1}점`,
-        `2) ${PRISM_QUESTIONS[1]} → ${q2}점`,
-        `3) ${PRISM_QUESTIONS[2]} → ${q3}점`,
-        `4) ${PRISM_QUESTIONS[3]} → ${q4}점`,
-        `5) ${PRISM_QUESTIONS[4]} → ${q5}점`,
-        "원점수는 학습태도 분류와 ILS 차원 해석의 입력값으로 사용됩니다.",
+        "과학 탐구는 분류와 시스템화에 특화된 경향이 강하므로, 원리를 마인드맵과 인과관계 도표로 시각화하는 접근이 유리합니다.",
+        "지식을 소유하는 수준까지 원리를 백지 구조도로 설명하는 훈련이 필요하며, 문제량보다 원리 분해와 도식화 비중을 높여야 실전력이 향상됩니다.",
+        "도식화 기반 학습은 장기적으로 공학/데이터형 전공 적합도와도 연결됩니다.",
       ],
+      visual: "scienceMap",
     },
     {
       pageNo: 6,
       title: "제6면 | 학습 태도 검사(GRSLSS) 정밀 분석",
-      subtitle: "학습 실행력과 몰입 지속성",
+      subtitle: "독립형 성향의 운영 해법",
       paragraphs: [
-        `학습 유형은 "${report.learningType}"으로 분류됩니다. 평균 점수는 ${report.average}점이며, 현재 패턴은 과제 시작-전개-완료의 세 구간에서 비교적 안정적인 수행 흐름을 보여줍니다.`,
-        `강점 축 1: ${report.strengths[0]}`,
-        `강점 축 2: ${report.strengths[1]}`,
-        `강점 축 3: ${report.strengths[2]}`,
-        "다만 성과가 일정하게 유지되려면 주간 단위 복기 루틴(근거 정리, 오답 언어화, 재적용 계획)이 반드시 병행되어야 합니다.",
+        "독립형 성향은 단순 고집이 아니라 지식을 자기 논리 체계 안에서 완전히 소화하려는 학문적 주체성의 표현입니다.",
+        "교사 중심 주입식 수업에서는 인지 피로가 높아질 수 있으므로, 계획-실행-복기의 자기 루틴 설계가 필요합니다.",
+        `문항 응답 상세: ${PRISM_QUESTIONS[0]}(${q1}점), ${PRISM_QUESTIONS[1]}(${q2}점), ${PRISM_QUESTIONS[2]}(${q3}점), ${PRISM_QUESTIONS[3]}(${q4}점), ${PRISM_QUESTIONS[4]}(${q5}점)`,
       ],
     },
     {
       pageNo: 7,
       title: "제7면 | 공학선호도검사(ILS) 정밀 분석",
-      subtitle: "4개 차원 인지 처리 경향",
+      subtitle: "공학적 직관과 정교한 분석 설계",
       paragraphs: [
-        "ILS는 학습 방식의 취향이 아니라 정보 처리 규칙을 보여주는 지표입니다. 점수차가 클수록 특정 환경에서 성과가 빠르게 나고, 반대로 비선호 환경에서는 피로가 증가할 수 있습니다.",
-        ...ilsDimensions.map(
-          (d) => `${d.left} ↔ ${d.right} | 점수차 ${d.diff} | 우세: ${d.favored} | 해석: ${d.level}`
-        ),
+        "공학 적합도는 학습 성향보다 더 강하게 작동하는 인지 처리 규격입니다.",
+        "이 페이지는 DOCX 지시 문구에 따라 ILS 4차원 시각 차트를 삽입한 페이지입니다.",
+        ...ilsDimensions.map((d) => `${d.left} ↔ ${d.right} | 점수차 ${d.diff} | 우세: ${d.favored} | ${d.level}`),
       ],
+      visual: "ilsChart",
     },
     {
       pageNo: 8,
-      title: "제8면 | ILS 차원별 학습 전략",
-      subtitle: "점수 구간별 운영 가이드",
+      title: "제8면 | 지적 확장 전략 I",
+      subtitle: "제 8~9면 : 서울대 아로리 스타일 탐구 설계",
       paragraphs: [
-        "1~3점 구간: 조화 상태입니다. 다양한 학습 방식 전환이 가능하므로 탐색 과제를 폭넓게 배치해도 안정적으로 적응합니다.",
-        "5~7점 구간: 선호 구간입니다. 성취 속도가 올라가므로 핵심 과목은 선호 방식으로 먼저 이해한 뒤, 비선호 방식 전환 연습을 붙이는 것이 효과적입니다.",
-        "9~11점 구간: 매우 선명한 선호 구간입니다. 비선호 조건에서 집중 저하가 커질 수 있으므로 환경 설계(시간, 자료 형태, 피드백 방식)를 먼저 맞춘 후 과제를 투입해야 합니다.",
-        "실행 원칙은 '선호 방식으로 앵커링 후 비선호 확장'입니다.",
+        "깊이 있는 학업 역량은 독립적인 자아가 주체가 되어 끈기 있게 질문을 던지고 해답을 찾아가는 과정입니다.",
+        "독립성, 숙고형, 직관형 성향은 이 기준에 부합하는 핵심 자산이며, 정답 중심 과제보다 탐구 중심 과제에서 강점이 크게 발현됩니다.",
+        "초·중등 시기에는 실패 리스크가 낮은 프로젝트를 통해 탐구 메커니즘을 체득해야 합니다.",
       ],
     },
     {
       pageNo: 9,
-      title: "제9면 | 진로·전공 적합군 제안",
-      subtitle: "전공 탐색 1차 후보군",
+      title: "제9면 | 지적 확장 전략 II",
+      subtitle: "파생 탐구 주제 예시",
       paragraphs: [
-        `공학 적합도 지표는 ${report.engineeringFit}점으로 산출되었습니다. 이는 논리 구조화, 근거 기반 판단, 깊이 탐구 성향이 결합될 때 강점이 높게 나타나는 결과입니다.`,
-        "권장 탐색군은 데이터·공학·분석 중심 트랙이며, 문제 해결 과정이 명확한 과목에서 성취 확장 가능성이 큽니다.",
-        "진로 탐색은 '적성-성취-지속성' 3축으로 평가해야 하며, 단발성 흥미만으로 결정하지 않도록 단계형 탐색 일정을 권장합니다.",
+        "수학-알고리즘: 일상 동선이나 앱 구조를 해체하고 최적화 알고리즘을 설계하는 보고서",
+        "물리-도식화: 드론 비행 원리 등 물리 현상을 화살표/도형으로 구조화하고 수식화하는 포스터",
+        "실패 자산화 보고서: 오답·실패 원인 분석을 통해 다음 실험 제언을 남기는 구조",
       ],
     },
     {
       pageNo: 10,
-      title: "제10면 | 학습 로드맵",
-      subtitle: "12개월 실행 계획",
+      title: "제10면 | 6년 통합 로드맵 I",
+      subtitle: "제 10~11면 : 시행착오의 자산화",
       paragraphs: [
-        "단기(1~3개월): 일일 루틴 고정, 과제 착수 시간을 일정화하고 오답 복기 규칙을 표준화합니다.",
-        "중기(4~8개월): 약점 과목 보완과 심화 과목 확장을 동시에 진행합니다. 월 단위 성취 지표를 두고 편차를 관리합니다.",
-        "장기(9~12개월): 실전 출력 최적화 단계입니다. 모의 평가-피드백-수정 사이클을 고정해 성과 재현성을 확보합니다.",
-        "모든 단계에서 '기록-점검-재설계'를 반복하는 운영이 중요합니다.",
+        "초·중등 시기는 지식 선행 자체보다, 고교 심화 탐구를 위한 안전한 실패와 내성 축적의 시기로 설계해야 합니다.",
+        "규범 준수 경향으로 실수를 두려워할 수 있으므로, 이 시기부터 실패를 데이터로 해석하는 습관을 만들어야 합니다.",
+        "로드맵의 목표는 고교 단계에서 거침없는 탐구력으로 전환되는 기반 구축입니다.",
       ],
+      visual: "roadmap",
     },
     {
       pageNo: 11,
-      title: "제11면 | 학부모 코칭 가이드",
-      subtitle: "가정 내 피드백 운영 원칙",
+      title: "제11면 | 6년 통합 로드맵 II",
+      subtitle: "단계별 집중 과제",
       paragraphs: [
-        "결과 확인 전에 과정 질문을 먼저 제시해 주세요. '몇 점이냐'보다 '어떤 근거로 풀었는지'를 묻는 대화가 학습 자율성을 유지합니다.",
-        "개입 기준을 사전에 정하고, 일상에서는 학생의 자기 조절 시간을 보장하는 것이 좋습니다. 과잉 개입은 단기 성과를 만들 수 있지만 장기 자립성을 약화시킬 수 있습니다.",
-        "주간 점검(짧게), 월간 점검(깊게) 구조를 권장합니다. 코칭은 통제가 아니라 실행 환경 설계입니다.",
+        "초등 고학년: 시각적 도식화 노트 습관 형성",
+        "중등: 안전한 실패 반복 경험 및 실패 분석 보고서 최소 5회",
+        "고등: 심화 탐구 결과물 산출 및 지적 성숙도 증명",
+        "단계별 산출물은 상담/코칭에서 누적 포트폴리오로 관리합니다.",
       ],
     },
     {
       pageNo: 12,
       title: "제12면 | 전문가 최종 처방",
-      subtitle: "실행 고정과 성과 재현 전략",
+      subtitle: "제 12-1/12-2면 통합 처방",
       paragraphs: [
-        "첫째, 자기 언어화 루틴을 고정합니다. 매 학습 후 핵심 개념을 본인 문장으로 정리하면 지식 정체를 줄이고 적용력을 높일 수 있습니다.",
-        "둘째, 실전 출력 루틴을 고정합니다. 문제 풀이 후 정답 확인으로 끝내지 않고, 근거 재작성과 오답 원인 분류를 수행해야 성과가 누적됩니다.",
-        "셋째, 센터-학부모-학생 3자 점검 체계를 유지합니다. 같은 기준표로 월별 변화를 추적하면 진로·학습 전략을 안정적으로 업데이트할 수 있습니다.",
-        `${studentName} 학생의 권장 결론: 강점은 깊이와 구조화이며, 핵심 과제는 출력 전환의 자동화입니다.`,
+        "핵심 처방 I: 자기 언어화 프로토콜(즉시 요약, 구조적 도식화, 가상 설명)로 숙고형 병목을 방어합니다.",
+        "핵심 처방 II: 학부모 코칭은 결과 중심 지시가 아닌 과정 데이터 질문 중심으로 전환합니다.",
+        "실패를 성장 데이터로 재정의하고, 정답이 없는 탐구를 허용하는 환경을 제공해야 고교 심화 구간에서 폭발적 성장을 기대할 수 있습니다.",
       ],
     },
   ];
@@ -265,15 +341,16 @@ export default function ReportIssuePage() {
             className="h-auto w-[280px] max-w-full object-contain"
           />
           <h2 className="mt-5 text-3xl font-extrabold text-[#1f326a]">종합분석리포트 발행</h2>
-          <p className="mt-3 text-lg leading-8 text-[#41537f]">12면 Full Text 보고서를 생성하고 인쇄할 수 있습니다.</p>
+          <p className="mt-3 text-lg leading-8 text-[#41537f]">근거파일 기반 12면 + 시각화 삽입 + 표지 포함 템플릿</p>
         </aside>
 
         <section className="border-r border-[#d6dbe6] bg-white p-8">
           <div className="rounded-lg bg-gradient-to-r from-[#132964] via-[#20397c] to-[#132964] px-6 py-4 text-white">
             <p className="text-lg font-semibold opacity-90">입시DNA프리즘 최종 단계</p>
-            <h1 className="mt-1 text-4xl font-black">{studentName} 학생 12면 리포트</h1>
+            <h1 className="mt-1 text-4xl font-black">{studentName} 학생 전략보고서</h1>
           </div>
           <ul className="mt-5 grid gap-2 text-lg text-[#2f4677]">
+            <li className="rounded border border-[#d7deea] bg-[#f8faff] px-3 py-2">표지 페이지</li>
             {pages.map((p) => (
               <li key={p.pageNo} className="rounded border border-[#d7deea] bg-[#f8faff] px-3 py-2">
                 {p.title}
@@ -302,6 +379,27 @@ export default function ReportIssuePage() {
       </section>
 
       <section className="report-stack mx-auto flex w-[210mm] flex-col gap-4">
+        <article className="report-page min-h-[297mm] border border-[#d3d9e6] bg-white p-10 shadow-[0_10px_24px_rgba(18,44,99,0.15)]">
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <Image
+              src="/suprima_logo_2025_transparent.png"
+              alt="대치수프리마 입시&코칭센터"
+              width={360}
+              height={120}
+              className="h-auto w-[360px] object-contain"
+            />
+            <div className="mt-10 w-full max-w-[720px] rounded bg-gradient-to-r from-[#132964] via-[#20397c] to-[#132964] py-4 text-white shadow-lg">
+              <p className="text-lg font-semibold">입시DNA프리즘</p>
+              <h1 className="text-4xl font-black">전략보고서 표지</h1>
+            </div>
+            <p className="mt-8 text-2xl font-bold text-[#1f326a]">{studentName} 학생 종합분석리포트</p>
+            <p className="mt-2 text-lg text-[#41537f]">발행일: {issueDate}</p>
+            <p className="mt-6 rounded-lg border border-[#d7deea] bg-[#f8faff] px-5 py-3 text-base text-[#2f4677]">
+              본 문서는 "명리_진로_12p_보고서.docx" 근거 항목을 기반으로 구성되었습니다.
+            </p>
+          </div>
+        </article>
+
         {pages.map((p) => (
           <article
             key={p.pageNo}
@@ -322,16 +420,6 @@ export default function ReportIssuePage() {
             <p className="mt-2 text-xl font-semibold text-[#324d84]">{p.subtitle}</p>
             <p className="mt-2 text-base text-[#5a6b93]">학생: {studentName} | 발행일: {issueDate}</p>
 
-            {p.highlights ? (
-              <ul className="mt-6 grid gap-2 text-lg leading-8 text-[#263f71]">
-                {p.highlights.map((h, i) => (
-                  <li key={`${p.pageNo}-h-${i}`} className="rounded-lg border border-[#dae1ee] bg-[#f8faff] px-4 py-2">
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-
             <div className="mt-6 grid gap-4">
               {p.paragraphs.map((paragraph, i) => (
                 <p
@@ -341,10 +429,11 @@ export default function ReportIssuePage() {
                   {paragraph}
                 </p>
               ))}
+              {p.visual ? <VisualBlock kind={p.visual} ils={ilsDimensions} /> : null}
             </div>
 
             <footer className="mt-10 border-t border-[#e1e6f0] pt-4 text-sm text-[#6d7b9b]">
-              대치수프리마 입시&코칭센터 | 입시 DNA 프리즘 | 종합분석리포트
+              대치수프리마 입시&코칭센터 | 입시 DNA 프리즘 | 전략보고서 템플릿
             </footer>
           </article>
         ))}
