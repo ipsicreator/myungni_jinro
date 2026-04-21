@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "qa:static": "node scripts/qa-static.mjs",
+    "qa:release": "powershell -ExecutionPolicy Bypass -File scripts/qa-release.ps1",
+    "qa:fix": "powershell -ExecutionPolicy Bypass -File scripts/qa-fix.ps1",
+    "qa:periodic": "powershell -ExecutionPolicy Bypass -File scripts/run-periodic-check.ps1"
   },
   "dependencies": {
     "next": "16.2.4",
