@@ -47,22 +47,49 @@ export async function POST(req: NextRequest) {
     }
 
     const mappedReport = buildMappedReport(body.intake, body.answers);
-    const row = await saveReportRecord({
-      source: body.source ?? 'ipsi-dna-prism-next',
-      createdAt: body.createdAt,
-      intake: body.intake,
-      answers: body.answers,
-      report: mappedReport,
-    });
 
-    return NextResponse.json({
-      ok: true,
-      stored: row,
-      reportSummary: mappedReport.scoreSummary,
-      routing: mappedReport.routing,
-      report: mappedReport,
-      generationMode: 'api-only',
-    });
+    try {
+      const row = await saveReportRecord({
+        source: body.source ?? 'ipsi-dna-prism-next',
+        createdAt: body.createdAt,
+        intake: body.intake,
+        answers: body.answers,
+        report: mappedReport,
+      });
+
+      return NextResponse.json({
+        ok: true,
+        stored: row,
+        reportSummary: mappedReport.scoreSummary,
+        routing: mappedReport.routing,
+        report: mappedReport,
+        generationMode: 'api-only',
+        persistence: 'saved',
+      });
+    } catch (saveError) {
+      console.error('report save failed, returning transient report:', saveError);
+      const createdAt = body.createdAt ?? new Date().toISOString();
+      const fallbackStored = {
+        reportId: `transient-${Date.now()}`,
+        studentKey: `${body.intake.name}|${body.intake.birthDate}|${body.intake.studentPhone}`,
+        studentName: body.intake.name,
+        school: body.intake.school,
+        grade: body.intake.grade,
+        createdAt,
+        headline: mappedReport.headline,
+      };
+
+      return NextResponse.json({
+        ok: true,
+        stored: fallbackStored,
+        reportSummary: mappedReport.scoreSummary,
+        routing: mappedReport.routing,
+        report: mappedReport,
+        generationMode: 'api-only',
+        persistence: 'transient',
+        warning: '저장소 연결 문제로 이번 결과는 임시 생성본입니다.',
+      });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -73,8 +100,19 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const limitParam = req.nextUrl.searchParams.get('limit');
-  const limit = limitParam ? Math.max(1, Math.min(200, Number(limitParam))) : 20;
-  const rows = await listRecentReports(Number.isFinite(limit) ? limit : 20);
-  return NextResponse.json({ ok: true, count: rows.length, rows });
+  try {
+    const limitParam = req.nextUrl.searchParams.get('limit');
+    const limit = limitParam ? Math.max(1, Math.min(200, Number(limitParam))) : 20;
+    const rows = await listRecentReports(Number.isFinite(limit) ? limit : 20);
+    return NextResponse.json({ ok: true, count: rows.length, rows, persistence: 'saved' });
+  } catch (error) {
+    console.error('list reports failed:', error);
+    return NextResponse.json({
+      ok: true,
+      count: 0,
+      rows: [],
+      persistence: 'unavailable',
+      warning: '저장소 연결 문제로 최근 리포트 목록을 불러오지 못했습니다.',
+    });
+  }
 }
