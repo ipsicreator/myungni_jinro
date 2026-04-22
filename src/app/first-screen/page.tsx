@@ -1,13 +1,16 @@
-﻿import Link from "next/link";
+﻿import Image from "next/image";
+import Link from "next/link";
 
 export default function FirstScreenPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#e6e8ee] p-4">
       <section className="relative flex h-[800px] w-[1280px] flex-col items-center justify-between rounded-2xl border border-[#d0d6e3] bg-[#e6e8ee] px-14 py-8 shadow-xl">
         <header className="absolute left-8 top-8 z-10">
-          <img
+          <Image
             src="/suprima_logo_2025_transparent.png"
             alt="대치수프리마 입시&코칭센터"
+            width={250}
+            height={86}
             className="h-auto w-[250px] max-w-full object-contain"
           />
         </header>
@@ -37,14 +40,15 @@ export default function FirstScreenPage() {
           >
             진단 시작하기
           </Link>
-          <button
-            type="button"
+          <Link
+            href="/report-template"
             className="grid h-24 place-items-center rounded-2xl bg-[#20397d] text-5xl font-extrabold text-white transition hover:brightness-95"
           >
             샘플 리포트 보기
-          </button>
+          </Link>
         </div>
       </section>
     </main>
   );
 }
+
