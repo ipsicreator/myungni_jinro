@@ -123,11 +123,17 @@ function ConsultationApplyForm() {
 
           <DecodedRadar />
 
-          <div className="bg-[#f0f9ff] p-4 rounded-2xl border border-[#bae6fd] mb-8">
-            <p className="text-[12px] font-black text-[#0369a1] leading-relaxed">
+          <div className="bg-[#f0f9ff] p-6 rounded-2xl border border-[#bae6fd] mb-8">
+            <p className="text-[12px] font-black text-[#0369a1] leading-relaxed mb-4">
               "상담 시 이 분포도의 각 축이 의미하는 기질적 충돌 해결책과<br/>
               생기부 기록 차별화 전략을 완벽히 해부해 드립니다."
             </p>
+            <div className="pt-4 border-t border-[#bae6fd] text-left">
+              <p className="text-[11px] font-black text-[#0369a1] uppercase mb-1">Contact Information</p>
+              <p className="text-[12px] font-bold text-[#0c4a6e]">대치 수프리마 입시&코칭센터</p>
+              <p className="text-[11px] text-[#0c4a6e]/70">서울시 강남구 대치동 (SUPREMA CLINIC)</p>
+              <p className="text-[12px] font-black text-[#1e3a8a] mt-1">문의: 02-1234-5678</p>
+            </div>
           </div>
 
           <button 

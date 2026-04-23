@@ -538,6 +538,21 @@ function PrismRadarChart({ scores, blinded = false }: { scores: { axis: string; 
                 <div className="h-2 w-8 rounded-full bg-gradient-to-r from-[#3b82f6] via-[#8b5cf6] to-[#ec4899] shadow-sm" />
                 <span className="text-[11px] font-black text-[#1e3a8a]">OO 학생의 Prism 역량</span>
               </div>
+              <div className="flex items-center gap-6">
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-[#1e3a8a] mb-1">스캔하여 상담 예약</p>
+                  <svg className="w-4 h-4 ml-auto text-[#1e3a8a] animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
+                <div className="h-24 w-24 bg-white p-2 rounded-xl shadow-lg border border-[#e2e8f0] flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://myungni-jinro.vercel.app/consultation/apply?reportId=PRISM-${Math.floor(Math.random()*90000)+10000}`)}`} 
+                    alt="QR Code for Consultation"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
               <div className="flex items-center gap-2">
                 <div className="h-0 w-8 border-t-2 border-dashed border-[#94a3b8]" />
                 <span className="text-[11px] font-black text-[#64748b]">목표 대학 합격자 평균</span>
@@ -685,6 +700,7 @@ export function ReportFormView({ content }: { content: ReportContent }) {
                   <p>센터명: {content.coverProfile.centerName}</p>
                   <p>주소: {content.coverProfile.address}</p>
                   <p>연락처: {content.coverProfile.phone}</p>
+                  <p className="mt-1 opacity-70">Insta: {content.coverProfile.snsInstagram} | Band: {content.coverProfile.snsBand}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-black text-[#1e3a8a] mb-2">REPORT STATUS</p>

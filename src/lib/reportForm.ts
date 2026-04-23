@@ -32,6 +32,7 @@ export type CoverProfile = {
   website: string;
   snsInstagram: string;
   snsBlog: string;
+  snsBand: string;
 };
 
 export type ReportContent = {
@@ -124,6 +125,7 @@ export function buildReportContent(form: PrismForm, answers: number[]): ReportCo
     website: "www.suprema.clinic",
     snsInstagram: "@suprema_clinic",
     snsBlog: "blog.naver.com/suprema",
+    snsBand: "band.us/@suprema",
   };
 
   const pages: ReportPageItem[] = [
