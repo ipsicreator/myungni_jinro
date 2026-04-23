@@ -324,27 +324,6 @@ function BlindedSection({ children, label }: { children: React.ReactNode; label?
 }
 
 function HighlightText({ text }: { text: string }) {
-  // Key terms to highlight for immediate perception
-  const keywords = [
-    "독립형", "회피형", "협동형", "경쟁형", "참여형", "의존형",
-    "숙고형", "활동형", "감각형", "직관형", "시각형", "언어형", "순차형", "총체형",
-    "서울대", "KAIST", "아로리", "R&E", "로드맵", "자산화", "VVIP",
-    "수학", "과학", "전공", "고교", "내신", "스토리텔링", "자기 언어화",
-  ];
-
-  // Match bracketed items like [즉시 요약]
-  const badgeRegex = /\[(.*?)\]/g;
-  
-  let parts: (string | JSX.Element)[] = [text];
-
-  // First, handle bracketed badges
-  let newParts: (string | JSX.Element)[] = [];
-  parts.forEach(part => {
-    if (typeof part !== 'string') {
-      newParts.push(part);
-      return;
-    }
-    const matches = part.split(badgeRegex);
   if (!text) return null;
   const parts = text.split(/(\[.*?\])/g);
   return (
@@ -444,6 +423,150 @@ function CompetitiveRankVisual({ scores }: { scores: { A: number; B: number } })
   );
 }
 
+function PrismRadarChart({ scores, blinded = false }: { scores: { axis: string; student: number; target: number }[]; blinded?: boolean }) {
+  const size = 400;
+  const center = size / 2;
+  const radius = 120;
+  const angleStep = (Math.PI * 2) / scores.length;
+
+  const getPoint = (val: number, i: number, r: number) => {
+    const a = angleStep * i - Math.PI / 2;
+    return {
+      x: center + (r * val / 100) * Math.cos(a),
+      y: center + (r * val / 100) * Math.sin(a),
+    };
+  };
+
+  const studentPath = scores.map((s, i) => {
+    const p = getPoint(s.student, i, radius);
+    return `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`;
+  }).join(" ") + " Z";
+
+  const targetPath = scores.map((s, i) => {
+    const p = getPoint(s.target, i, radius);
+    return `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`;
+  }).join(" ") + " Z";
+
+  return (
+    <div className="mt-8 relative w-full aspect-[16/9] bg-white rounded-[2rem] border border-[#e2e8f0] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col items-center justify-center p-12 group">
+      {/* Prism Light Beam Effect */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+        <div className="absolute top-1/2 left-0 w-[200%] h-32 -translate-y-1/2 -translate-x-1/4 rotate-12 bg-gradient-to-r from-transparent via-[#3b82f6] via-[#8b5cf6] via-[#ec4899] via-[#facc15] to-transparent blur-3xl" />
+      </div>
+
+      <div className={`relative z-10 w-full h-full flex flex-col items-center transition-all duration-700 ${blinded ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
+        {/* Title */}
+        <h3 className="text-3xl font-black text-[#1e3a8a] mb-12 tracking-tight">Entrance Exam DNA: Prism 역량 분포도</h3>
+
+        <div className="flex-1 flex items-center justify-center relative w-full">
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="drop-shadow-2xl overflow-visible">
+            <defs>
+              <linearGradient id="prismFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3b82f6" />
+                <stop offset="50%" stopColor="#8b5cf6" />
+                <stop offset="100%" stopColor="#ec4899" />
+              </linearGradient>
+            </defs>
+
+            {/* Grid Circles */}
+            {[20, 40, 60, 80, 100].map((r) => (
+              <circle
+                key={r}
+                cx={center}
+                cy={center}
+                r={(r / 100) * radius}
+                fill="none"
+                stroke="#e2e8f0"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+              />
+            ))}
+
+            {/* Axes */}
+            {scores.map((_, i) => {
+              const p = getPoint(100, i, radius);
+              return (
+                <line
+                  key={i}
+                  x1={center}
+                  y1={center}
+                  x2={p.x}
+                  y2={p.y}
+                  stroke="#e2e8f0"
+                  strokeWidth="1"
+                />
+              );
+            })}
+
+            {/* Target Path (Gray Dashed) */}
+            <path d={targetPath} fill="none" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4 4" opacity="0.6" />
+
+            {/* Student Path (Dynamic Prism) */}
+            <path
+              d={studentPath}
+              fill="url(#prismFill)"
+              fillOpacity="0.15"
+              stroke="url(#prismFill)"
+              strokeWidth="4"
+              className="drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+            />
+
+            {/* Labels */}
+            {scores.map((s, i) => {
+              const p = getPoint(135, i, radius);
+              return (
+                <g key={i}>
+                  <text x={p.x} y={p.y - 5} textAnchor="middle" className="text-[12px] font-black fill-[#1e293b]">{s.axis}</text>
+                  <text x={p.x} y={p.y + 10} textAnchor="middle" className="text-[9px] font-bold fill-[#64748b] opacity-70">
+                    ({s.axis === "타고난 동기" ? "Innate Drive" : 
+                      s.axis === "인지적 깊이" ? "Cognitive Depth" :
+                      s.axis === "전략적 균형" ? "Strategic Balance" :
+                      s.axis === "메타 실행력" ? "Meta-Execution" :
+                      s.axis === "기록 차별성" ? "Record Uniqueness" : "Future Potential"})
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* Footer Branding & Legend */}
+        <div className="w-full flex items-end justify-between mt-auto">
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-8 items-center">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-8 rounded-full bg-gradient-to-r from-[#3b82f6] via-[#8b5cf6] to-[#ec4899] shadow-sm" />
+                <span className="text-[11px] font-black text-[#1e3a8a]">OO 학생의 Prism 역량</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-0 w-8 border-t-2 border-dashed border-[#94a3b8]" />
+                <span className="text-[11px] font-black text-[#64748b]">목표 대학 합격자 평균</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {blinded && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/20 backdrop-blur-[2px]">
+          <div className="bg-[#1e3a8a] text-white px-8 py-6 rounded-[2rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] flex flex-col items-center gap-4 border-4 border-white animate-pulse">
+            <div className="h-16 w-16 bg-white/10 rounded-full flex items-center justify-center mb-2">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <p className="text-xl font-black tracking-tight">상담 신청 시 완벽해부 데이터 공개</p>
+            <p className="text-[12px] font-bold text-blue-200 text-center leading-relaxed">
+              본 분포도의 상세 정량 수치와 목표 대학 합격 전략은<br/>
+              1:1 대면 상담 시 '완벽 해부 분석지'를 통해 제공됩니다.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function VisualBlock({ page, content }: { page: ReportPageItem; content: ReportContent }) {
   if (page.visual === "ilsChart") return <IlsChart ils={content.ilsDimensions} />;
   if (page.visual === "manseDNA") return <ManseDNAVisual scores={content.abcScores} />;
@@ -451,6 +574,7 @@ function VisualBlock({ page, content }: { page: ReportPageItem; content: ReportC
   if (page.visual === "subjectMap") return <SubjectMapVisual />;
   if (page.visual === "readingFlow") return <ReadingStrategyVisual />;
   if (page.visual === "competitiveRank") return <CompetitiveRankVisual scores={content.abcScores} />;
+  if (page.visual === "prismRadar" && content.prismScores) return <PrismRadarChart scores={content.prismScores} blinded={page.pageNo === 18} />;
   return null;
 }
 
@@ -664,6 +788,49 @@ export function ReportFormView({ content }: { content: ReportContent }) {
               <div className="mt-8">
                 <VisualBlock page={p} content={content} />
               </div>
+
+              {p.pageNo === 18 && (
+                <div className="mt-12 border-t-4 border-[#1e3a8a] pt-12 flex items-start justify-between">
+                  <div className="max-w-[60%]">
+                    <h3 className="text-2xl font-black text-[#1e3a8a] mb-4">[ 대면 상담 예약하기 ]</h3>
+                    <p className="text-sm font-bold text-[#64748b] leading-relaxed mb-6">
+                      리포트 번호: <span className="text-[#1e3a8a]">PRISM-{content.studentName.charCodeAt(0)}-{content.issueDate.replace(/\./g, "")}</span>
+                      <br />
+                      위 고유 번호를 입력하시면 담당 전문가가 데이터를 사전 검토합니다.
+                    </p>
+                    <Link 
+                      href={`/consultation/apply?reportId=PRISM-${content.studentName.charCodeAt(0)}-${content.issueDate.replace(/\./g, "")}`}
+                      className="inline-flex items-center gap-3 px-6 py-4 bg-[#f8fafc] border-2 border-[#1e3a8a] rounded-2xl group cursor-pointer hover:bg-[#1e3a8a] hover:text-white transition-all no-underline"
+                    >
+                      <div className="h-10 w-10 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#1e3a8a]">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <span className="text-lg font-black tracking-tight text-[#1e3a8a] group-hover:text-white">실시간 상담 일정 확정하기</span>
+                    </Link>
+                  </div>
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="h-32 w-32 bg-white border-2 border-[#e2e8f0] rounded-2xl flex flex-col items-center justify-center p-2 shadow-2xl relative">
+                      <div className="absolute -top-3 -right-3 h-8 w-8 bg-[#ef4444] rounded-full flex items-center justify-center text-white text-[10px] font-black animate-pulse shadow-lg border-2 border-white">
+                        LINK
+                      </div>
+                      <div className="h-24 w-24 bg-[#f1f5f9] rounded-lg border border-dashed border-[#cbd5e1] flex items-center justify-center overflow-hidden">
+                        {/* Mock QR Content */}
+                        <div className="w-full h-full p-2 bg-white flex flex-col items-center justify-center">
+                          <div className="w-full h-full bg-[#1e3a8a]/10 rounded flex items-center justify-center">
+                            <span className="text-[10px] font-bold text-[#1e3a8a] text-center">QR SCAN<br/>FOR APPLY</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-4 text-[10px] font-black text-[#1e3a8a] text-center leading-tight">
+                      [전문가 상담 예약 및<br/>상세 분석 보기]
+                    </p>
+                  </div>
+                </div>
+              )}
             </main>
 
             <footer className="mt-auto pt-8 border-t border-[#f1f5f9] flex justify-between items-center text-[9px] font-bold text-[#94a3b8] uppercase tracking-widest">

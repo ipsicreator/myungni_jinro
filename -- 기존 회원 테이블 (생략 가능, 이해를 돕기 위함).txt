@@ -1,0 +1,35 @@
+-- 기존 회원 테이블 (생략 가능, 이해를 돕기 위함)
+CREATE TABLE user (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    -- ... 기타 기본 정보 ...
+    innate_drive_score INT -- 초기 기질 점수 저장 공간
+);
+
+-- [신규] 심층 진단 및 상담 예약 테이블
+CREATE TABLE counseling_reservation (
+    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL, -- 기존 user 테이블과 연계
+    target_univ VARCHAR(100), -- 목표 대학
+    target_dept VARCHAR(100), -- 목표 학과
+    
+    -- [심층 데이터 - 성적] (정량 데이터)
+    academic_scores JSON, -- 학기별 성적 (A~E) 예: {"kor_1_1": "A", "math_1_1": "B"}
+    
+    -- [심층 데이터 - 세특] (정성 데이터 - 분석 원본)
+    sc_text_raw TEXT, -- 사용자가 입력한 세특 원본 텍스트
+    
+    -- [AI 분석 결과 - Gemini] (정량/정성 누적)
+    cognitive_depth_score INT, -- 인지적 깊이 (0~100)
+    record_uniqueness_score INT, -- 기록 차별성 (0~100)
+    future_potential_score INT, -- 미래 확장성 (0~100)
+    gemini_insight TEXT, -- 제미나이 총평 (2문장)
+    gemini_evidences JSON, -- 분석 근거 문구 리스트
+    
+    -- 상담 관리 정보
+    reservation_date DATETIME NOT NULL, -- 상담 희망 일시
+    status VARCHAR(20) DEFAULT 'requested', -- requested, confirmed, completed, canceled
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);

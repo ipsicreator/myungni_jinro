@@ -22,7 +22,7 @@ export type ReportPageItem = {
   paragraphs: string[];
   bullets?: string[];
   table?: ReportTable;
-  visual?: "ilsChart" | "manseDNA" | "mathFlow" | "scienceMap" | "roadmap" | "competitiveRank";
+  visual?: "ilsChart" | "manseDNA" | "mathFlow" | "scienceMap" | "roadmap" | "competitiveRank" | "prismRadar" | "subjectMap" | "readingFlow";
 };
 
 export type CoverProfile = {
@@ -52,6 +52,11 @@ export type ReportContent = {
     mathPlan: string;
     sciencePlan: string;
   };
+  prismScores?: {
+    axis: string;
+    student: number;
+    target: number;
+  }[];
 };
 
 function clampIlsDiff(val: number) {
@@ -402,6 +407,24 @@ export function buildReportContent(form: PrismForm, answers: number[]): ReportCo
         "수(水) - 인성(A): 깊은 사색과 정보 흡수. (압도적: 95) - 학문의 깊이를 탐구하는 근원적 에너지.",
         "12운성/신살 분석: '문창귀인(文昌貴人)'의 작용으로 학문적 성취가 보장되며, '관대(冠帶)'의 기운으로 사회적 지위를 쟁취하려는 에너지가 충만함.",
       ],
+    },
+    {
+      pageNo: 18,
+      title: "[Expert’s Insight: 설계도를 넘어 시공으로]",
+      subtitle: "FROM BLUEPRINT TO CONSTRUCTION",
+      punchline: "데이터는 현상을 말하지만, 전문가는 해답을 제시합니다.",
+      paragraphs: [
+        "본 리포트를 통해 확인하신 데이터는 학생의 타고난 [입시 DNA]와 현재의 [학업 위치]를 보여주는 정밀 설계도입니다. 하지만 입시라는 집은 설계도만으로는 지어지지 않습니다.",
+        "주의하십시오. 본 보고서의 [기질-성적 충돌 구간]은 엔진 결함을 알고도 고속도로에 오르는 것과 같습니다. 고등학교 진학 전, 이 간극을 메우는 [전략적 튜닝]이 반드시 선행되어야 합니다.",
+      ],
+      bullets: [
+        "Self-Check 1: 아이가 공부를 ‘안’ 하는 것입니까, 기질과 맞지 않는 방식으로 ‘버티고’ 있는 것입니까?",
+        "Self-Check 2: 현재의 성적이 아이의 ‘진짜 실력’입니까, 상위권 경쟁에서 무너질 ‘일시적 착시’입니까?",
+        "Self-Check 3: 지금의 로드맵은 ‘아이의 소화력’에 맞춘 것입니까, ‘불안한 옆집 기준’에 맞춘 것입니까?",
+        "Self-Check 4: 아이의 생활기록부는 ‘유일한 스토리’입니까, 아니면 ‘흔한 활동의 나열’입니까?",
+        "Self-Check 5: 지금의 결정이 3년 뒤 대학 합격증을 바꿀 '결정적 변수'라는 사실을 직시하고 계십니까?",
+      ],
+      visual: "prismRadar",
     }
   );
 
@@ -416,5 +439,13 @@ export function buildReportContent(form: PrismForm, answers: number[]): ReportCo
     pages,
     coverProfile,
     routing,
+    prismScores: [
+      { axis: "타고난 동기", student: abcScores.A + abcScores.B / 2, target: 85 },
+      { axis: "인지적 깊이", student: abcScores.A, target: 90 },
+      { axis: "전략적 균형", student: 75, target: 88 },
+      { axis: "메타 실행력", student: abcScores.B, target: 82 },
+      { axis: "기록 차별성", student: 65, target: 92 },
+      { axis: "미래 확장성", student: 80, target: 85 },
+    ],
   };
 }
