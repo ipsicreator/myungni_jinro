@@ -698,9 +698,10 @@ export function ReportFormView({ content }: { content: ReportContent }) {
                 <div>
                   <p className="font-black text-[#1e3a8a] mb-2">CENTER INFORMATION</p>
                   <p>센터명: {content.coverProfile.centerName}</p>
+                  <p>대표: {content.coverProfile.representative}</p>
                   <p>주소: {content.coverProfile.address}</p>
                   <p>연락처: {content.coverProfile.phone}</p>
-                  <p className="mt-1 opacity-70">Insta: {content.coverProfile.snsInstagram} | Band: {content.coverProfile.snsBand}</p>
+                  <p className="mt-1 opacity-70">Insta: {content.coverProfile.snsInstagram} | Blog: {content.coverProfile.snsBlog}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-black text-[#1e3a8a] mb-2">REPORT STATUS</p>

@@ -27,6 +27,7 @@ export type ReportPageItem = {
 
 export type CoverProfile = {
   centerName: string;
+  representative: string;
   address: string;
   phone: string;
   website: string;
@@ -119,13 +120,14 @@ export function buildReportContent(form: PrismForm, answers: number[]): ReportCo
   ];
 
   const coverProfile: CoverProfile = {
-    centerName: "대치 수프리마 입시&코칭센터",
-    address: "서울특별시 강남구 대치동 (SUPREMA CLINIC)",
-    phone: "02-1234-5678",
+    centerName: "대치수프리마 입시&코칭센터",
+    representative: "이기욱 대표컨설턴트",
+    address: "서울시 강남구 테헤란로 326 B1F",
+    phone: "010-2370-1077 (문자전송)",
     website: "www.suprema.clinic",
-    snsInstagram: "@suprema_clinic",
-    snsBlog: "blog.naver.com/suprema",
-    snsBand: "band.us/@suprema",
+    snsInstagram: "suprima_ipsicreator",
+    snsBlog: "blog.naver.com/gouniv_hifive",
+    snsBand: "band.us/@suprima",
   };
 
   const pages: ReportPageItem[] = [

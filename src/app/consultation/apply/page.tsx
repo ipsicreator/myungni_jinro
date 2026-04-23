@@ -130,9 +130,10 @@ function ConsultationApplyForm() {
             </p>
             <div className="pt-4 border-t border-[#bae6fd] text-left">
               <p className="text-[11px] font-black text-[#0369a1] uppercase mb-1">Contact Information</p>
-              <p className="text-[12px] font-bold text-[#0c4a6e]">대치 수프리마 입시&코칭센터</p>
-              <p className="text-[11px] text-[#0c4a6e]/70">서울시 강남구 대치동 (SUPREMA CLINIC)</p>
-              <p className="text-[12px] font-black text-[#1e3a8a] mt-1">문의: 02-1234-5678</p>
+              <p className="text-[12px] font-bold text-[#0c4a6e]">대치수프리마 입시&코칭센터</p>
+              <p className="text-[11px] text-[#0c4a6e]/70">대표: 이기욱 대표컨설턴트</p>
+              <p className="text-[11px] text-[#0c4a6e]/70">서울시 강남구 테헤란로 326 B1F</p>
+              <p className="text-[12px] font-black text-[#1e3a8a] mt-1">문의: 010-2370-1077 (문자)</p>
             </div>
           </div>
 
