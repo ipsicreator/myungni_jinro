@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function FirstScreenPage() {
@@ -47,6 +47,15 @@ export default function FirstScreenPage() {
             샘플 리포트 보기
           </Link>
         </div>
+
+        <footer className="absolute bottom-6 w-full text-center text-sm font-medium text-[#64748b]">
+          <p>
+            대치수프리마 입시&코칭센터 | 대표: 이기욱 대표컨설턴트 | 문의: 010-2370-1077 (문자)
+          </p>
+          <p className="mt-1 text-xs opacity-80">
+            서울시 강남구 테헤란로 326 B1F | Insta: suprima_ipsicreator | Blog: blog.naver.com/gouniv_hifive | Band: band.us/@suprima
+          </p>
+        </footer>
       </section>
     </main>
   );
