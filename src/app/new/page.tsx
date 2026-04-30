@@ -1,4 +1,4 @@
-ï»¿"use client";
+"use client";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ export default function NewConsultPage() {
 
   const handleStart = () => {
     if (!canProceed) {
-      setErrorMessage("í•„ìˆ˜ ìž…ë ¥ í•­ëª©ì„ ëª¨ë‘ ìž‘ì„±í•´ ì£¼ì„¸ìš”.");
+      setErrorMessage("ÇÊ¼ö ÀÔ·Â Ç×¸ñÀ» ¸ðµÎ ÀÛ¼ºÇØ ÁÖ¼¼¿ä.");
       return;
     }
     saveFormToStorage(form);
@@ -44,25 +44,25 @@ export default function NewConsultPage() {
         <aside className="flex flex-col border-r border-[#d6dbe6] bg-[#f7f8fb]">
           <header className="border-b border-[#d6dbe6] px-5 py-5">
             <Image
-              src="/suprima_logo_2025_transparent.png"
-              alt="ëŒ€ì¹˜ìˆ˜í”„ë¦¬ë§ˆ ìž…ì‹œ&ì½”ì¹­ì„¼í„°"
+              src="/suprima_logo_final.png"
+              alt="´ëÄ¡¼öÇÁ¸®¸¶ ÀÔ½Ã&ÄÚÄª¼¾ÅÍ"
               width={300}
               height={104}
               className="h-auto w-[300px] max-w-full object-contain"
             />
           </header>
           <div className="p-6">
-            <h2 className="text-3xl font-extrabold text-[#1f326a]">ì§„ë‹¨ ì•ˆë‚´</h2>
+            <h2 className="text-3xl font-extrabold text-[#1f326a]">Áø´Ü ¾È³»</h2>
             <p className="mt-3 text-lg leading-8 text-[#41537f]">
-              í•™ìƒ ê¸°ë³¸ ì •ë³´ë¥¼ ìž…ë ¥í•˜ë©´ ê¸°ì§ˆ ë¶„ì„, í•™ìŠµ ì„±í–¥, ê³µí•™ ì í•©ë„,
-              ì§„ë¡œ ë¦¬í¬íŠ¸ë¡œ ì´ì–´ì§€ëŠ” í†µí•© ì§„ë‹¨ì„ ì‹œìž‘í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.
+              ÇÐ»ý ±âº» Á¤º¸¸¦ ÀÔ·ÂÇÏ¸é ±âÁú ºÐ¼®, ÇÐ½À ¼ºÇâ, °øÇÐ ÀûÇÕµµ,
+              Áø·Î ¸®Æ÷Æ®·Î ÀÌ¾îÁö´Â ÅëÇÕ Áø´ÜÀ» ½ÃÀÛÇÒ ¼ö ÀÖ½À´Ï´Ù.
             </p>
           </div>
         </aside>
 
         <section className="flex flex-col border-r border-[#d6dbe6] bg-white">
           <header className="grid h-[118px] place-items-center border-b border-[#2a3f77] bg-gradient-to-r from-[#132964] via-[#20397c] to-[#132964]">
-            <h1 className="text-5xl font-extrabold tracking-tight text-white">ìž…ì‹œDNAí”„ë¦¬ì¦˜</h1>
+            <h1 className="text-5xl font-extrabold tracking-tight text-white">ÀÔ½ÃDNAÇÁ¸®Áò</h1>
           </header>
 
           <form
@@ -73,20 +73,20 @@ export default function NewConsultPage() {
             }}
           >
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">í•™ìƒ ì´ë¦„</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">ÇÐ»ý ÀÌ¸§</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder={KR.studentDefault} value={form.studentName} onChange={setField("studentName")} />
             </label>
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">í•™êµëª…</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">ÇÐ±³¸í</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder={KR.schoolDefault} value={form.schoolName} onChange={setField("schoolName")} />
             </label>
             <div className="grid grid-cols-2 gap-2">
               <label className="grid gap-1">
-                <span className="text-sm font-semibold text-[#3e4f76]">í•™ë…„</span>
-                <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="ì¤‘2" value={form.grade} onChange={setField("grade")} />
+                <span className="text-sm font-semibold text-[#3e4f76]">ÇÐ³â</span>
+                <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="Áß2" value={form.grade} onChange={setField("grade")} />
               </label>
               <label className="grid gap-1">
-                <span className="text-sm font-semibold text-[#3e4f76]">ê³„ì—´</span>
+                <span className="text-sm font-semibold text-[#3e4f76]">°è¿­</span>
                 <select className="h-10 rounded-md border border-[#cfd5e0] px-3" value={form.track} onChange={setField("track")}>
                   <option>{KR.trackHumanities}</option>
                   <option>{KR.trackScience}</option>
@@ -94,20 +94,20 @@ export default function NewConsultPage() {
               </label>
             </div>
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">í•™ìƒ ì—°ë½ì²˜</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">ÇÐ»ý ¿¬¶ôÃ³</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="010-1234-5678" value={form.studentPhone} onChange={setField("studentPhone")} />
             </label>
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">ë³´í˜¸ìž ì—°ë½ì²˜</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">º¸È£ÀÚ ¿¬¶ôÃ³</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="010-9876-5432" value={form.parentPhone} onChange={setField("parentPhone")} />
             </label>
             <div className="grid grid-cols-2 gap-2">
               <label className="grid gap-1">
-                <span className="text-sm font-semibold text-[#3e4f76]">ìƒë…„ì›”ì¼</span>
+                <span className="text-sm font-semibold text-[#3e4f76]">»ý³â¿ùÀÏ</span>
                 <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="YYYY.MM.DD" value={form.birthDate} onChange={setField("birthDate")} />
               </label>
               <label className="grid gap-1">
-                <span className="text-sm font-semibold text-[#3e4f76]">ì„±ë³„</span>
+                <span className="text-sm font-semibold text-[#3e4f76]">¼ºº°</span>
                 <select className="h-10 rounded-md border border-[#cfd5e0] px-3" value={form.gender} onChange={setField("gender")}>
                   <option>{KR.genderMale}</option>
                   <option>{KR.genderFemale}</option>
@@ -115,7 +115,7 @@ export default function NewConsultPage() {
               </label>
             </div>
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">ì¶œìƒì‹œê°</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">Ãâ»ý½Ã°¢</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="HH:MM" value={form.birthTime} onChange={setField("birthTime")} />
             </label>
             {errorMessage ? <p className="text-sm font-semibold text-[#b42318]">{errorMessage}</p> : null}
@@ -124,28 +124,28 @@ export default function NewConsultPage() {
               className="mt-2 grid h-12 place-items-center rounded-md bg-[#c8922a] text-2xl font-bold text-white hover:brightness-95 disabled:cursor-not-allowed disabled:bg-[#d6b887]"
               disabled={!canProceed}
             >
-              ì§„ë‹¨ ì‹œìž‘í•˜ê¸°
+              Áø´Ü ½ÃÀÛÇÏ±â
             </button>
           </form>
         </section>
 
         <aside className="flex flex-col bg-[#f5f7fb]">
           <header className="border-b border-[#d6dbe6] px-5 py-5">
-            <p className="text-xs font-semibold tracking-wide text-[#7383a6]">ì§„í–‰ ë‹¨ê³„</p>
+            <p className="text-xs font-semibold tracking-wide text-[#7383a6]">ÁøÇà ´Ü°è</p>
             <div className="mt-2 flex items-center gap-2 text-lg font-bold text-[#1f326a]">
               <span className="grid h-7 w-7 place-items-center rounded-full bg-[#1f326a] text-sm text-white">1</span>
-              ê¸°ë³¸ ì •ë³´ ë“±ë¡
+              ±âº» Á¤º¸ µî·Ï
             </div>
           </header>
           <ol className="m-0 list-none p-0">
             <li className="border-b border-[#d6dbe6] px-5 py-5 text-base font-bold text-[#1f326a]">
-              <strong className="mr-2">01</strong>ê¸°ì§ˆ ì§„ë‹¨ ë¬¸í•­
+              <strong className="mr-2">01</strong>±âÁú Áø´Ü ¹®Ç×
             </li>
             <li className="border-b border-[#d6dbe6] px-5 py-5 text-base text-[#67789f]">
-              <strong className="mr-2">02</strong>í•™ìŠµ ì„±í–¥ ë¶„ì„
+              <strong className="mr-2">02</strong>ÇÐ½À ¼ºÇâ ºÐ¼®
             </li>
             <li className="px-5 py-5 text-base text-[#67789f]">
-              <strong className="mr-2">03</strong>ì§„ë‹¨ ê²°ê³¼ ë¦¬í¬íŠ¸
+              <strong className="mr-2">03</strong>Áø´Ü °á°ú ¸®Æ÷Æ®
             </li>
           </ol>
         </aside>

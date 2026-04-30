@@ -7,7 +7,7 @@ export default function FirstScreenPage() {
       <section className="relative flex h-[800px] w-[1280px] flex-col items-center justify-between rounded-2xl border border-[#d0d6e3] bg-[#e6e8ee] px-14 py-8 shadow-xl">
         <header className="absolute left-8 top-8 z-10">
           <Image
-            src="/suprima_logo_2025_transparent.png"
+            src="/suprima_logo_final.png"
             alt="대치수프리마 입시&코칭센터"
             width={250}
             height={86}

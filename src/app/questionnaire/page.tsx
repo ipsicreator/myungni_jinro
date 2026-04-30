@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,7 @@ export default function QuestionnairePage() {
         <aside className="flex flex-col border-r border-[#d6dbe6] bg-[#f7f8fb]">
           <header className="border-b border-[#d6dbe6] px-5 py-5">
             <Image
-              src="/suprima_logo_2025_transparent.png"
+              src="/suprima_logo_final.png"
               alt="대치수프리마 입시&코칭센터"
               width={300}
               height={104}
