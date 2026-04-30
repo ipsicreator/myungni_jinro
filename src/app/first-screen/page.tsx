@@ -11,7 +11,7 @@ export default function FirstScreenPage() {
             alt="대치수프리마 입시&코칭센터"
             width={200}
             height={68}
-            className="h-auto w-[200px] max-w-full object-contain"
+            className="h-auto w-[200px] max-w-full object-contain mix-blend-multiply"
           />
         </header>
 

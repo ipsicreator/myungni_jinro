@@ -672,7 +672,7 @@ export function ReportFormView({ content }: { content: ReportContent }) {
         <article className="report-page relative border-t-[12px] border-[#1e3a8a]">
           <div className="flex h-full flex-col items-center justify-between py-12">
             <header className="w-full flex justify-between items-start">
-              <Image src="/suprima_logo_final.png" alt="Logo" width={220} height={76} className="object-contain" />
+              <Image src="/suprima_logo_final.png" alt="Logo" width={220} height={76} className="object-contain mix-blend-multiply" />
               <div className="text-right">
                 <p className="text-[10px] font-black text-[#1e3a8a] tracking-tighter">SUPREMA CLINIC</p>
                 <p className="text-[8px] text-[#94a3b8]">PREMIUM DIAGNOSIS SYSTEM</p>
@@ -720,7 +720,7 @@ export function ReportFormView({ content }: { content: ReportContent }) {
         {content.pages.map((p) => (
           <article key={p.pageNo} className="report-page border-t-[8px] border-[#1e3a8a]">
             <header className="flex items-center justify-between border-b border-[#f1f5f9] pb-6 mb-10">
-              <Image src="/suprima_logo_final.png" alt="Logo" width={140} height={48} className="object-contain" />
+              <Image src="/suprima_logo_final.png" alt="Logo" width={140} height={48} className="object-contain mix-blend-multiply" />
               <div className="flex items-center gap-3">
                 <div className="h-10 w-[1px] bg-[#e2e8f0]" />
                 <div className="text-right">

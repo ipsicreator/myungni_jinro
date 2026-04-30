@@ -47,7 +47,7 @@ export default function QuestionnairePage() {
               alt="대치수프리마 입시&코칭센터"
               width={300}
               height={104}
-              className="h-auto w-[300px] max-w-full object-contain"
+              className="h-auto w-[300px] max-w-full object-contain mix-blend-multiply"
             />
           </header>
           <div className="p-6">

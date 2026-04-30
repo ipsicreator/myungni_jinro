@@ -152,7 +152,7 @@ function ConsultationApplyForm() {
     <div className="min-h-screen bg-[#f8fafc] py-12 px-6">
       <div className="max-w-xl mx-auto">
         <header className="flex flex-col items-center mb-12 text-center">
-          <Image src="/suprima_logo_final.png" alt="Logo" width={180} height={60} className="object-contain mb-8" />
+          <Image src="/suprima_logo_final.png" alt="Logo" width={180} height={60} className="object-contain mix-blend-multiply mb-8" />
           <div className="h-1 w-12 bg-[#b45309] rounded-full mb-4" />
           <h1 className="text-3xl font-black text-[#1e3a8a] tracking-tight mb-2">프리미엄 대면 상담 신청</h1>
           <p className="text-[#64748b] font-bold uppercase text-[10px] tracking-[0.2em]">Premium Strategy Consultation</p>

@@ -27,7 +27,7 @@ export default function ReportTemplatePage() {
             alt="대치수프리마 입시&코칭센터"
             width={300}
             height={104}
-            className="h-auto w-[300px] max-w-full object-contain"
+            className="h-auto w-[300px] max-w-full object-contain mix-blend-multiply"
           />
           <h2 className="mt-6 text-3xl font-extrabold text-[#1f326a]">리포트 양식</h2>
           <p className="mt-3 text-lg leading-8 text-[#41537f]">
