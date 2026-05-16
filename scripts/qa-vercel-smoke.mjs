@@ -21,15 +21,15 @@ const checks = [
   },
   {
     route: "/report-issue",
-    markers: ["제1면 | 종합 진단 개요", "리포트 인쇄", "12면 리포트"],
+    markers: ["전략보고서", "PDF 리포트 발행", "Admission DNA Prism"],
   },
   {
     route: "/report-template",
-    markers: ["리포트 템플릿", "입시DNA프리즘 템플릿 점검"],
+    markers: ["리포트 양식", "입시DNA프리즘 양식 점검"],
   },
   {
     route: "/report-templated",
-    markers: ["리포트 템플릿", "입시DNA프리즘 템플릿 점검"],
+    markers: ["리포트 양식", "입시DNA프리즘 양식 점검"],
   },
 ];
 
