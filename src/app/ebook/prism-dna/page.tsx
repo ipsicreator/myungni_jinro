@@ -18,13 +18,14 @@ const Section = ({ children, className = "", id = "" }: { children: React.ReactN
       { threshold: 0.1 }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
@@ -42,7 +43,17 @@ const Section = ({ children, className = "", id = "" }: { children: React.ReactN
   );
 };
 
-const TypeCard = ({ title, type, description, analysis, prescription, color, icon }: any) => (
+interface TypeCardProps {
+  title: React.ReactNode;
+  type: string;
+  description: string;
+  analysis: string;
+  prescription: string;
+  color: string;
+  icon: React.ReactNode;
+}
+
+const TypeCard = ({ title, type, description, analysis, prescription, color, icon }: TypeCardProps) => (
   <div className={`p-8 rounded-3xl border border-white/10 backdrop-blur-md bg-white/5 space-y-6 mb-12 shadow-2xl relative overflow-hidden group`}>
     <div className={`absolute top-0 right-0 w-32 h-32 opacity-10 blur-3xl rounded-full ${color}`}></div>
     <div className="flex items-center gap-4">

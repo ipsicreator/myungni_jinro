@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 
 import {
   ABC_QUESTIONS,
@@ -152,7 +152,7 @@ export default function IpsiiDnaPrismApp() {
     [answers]
   );
 
-  const getLikertPageQuestions = (questions: LikertQuestion[], key: 'abc' | 'learning') => {
+  const getLikertPageQuestions = useCallback((questions: LikertQuestion[], key: 'abc' | 'learning') => {
     const size = PAGE_SIZE[key];
     const start = page * size;
     const end = Math.min(questions.length, start + size);
@@ -162,9 +162,9 @@ export default function IpsiiDnaPrismApp() {
       items: questions.slice(start, end),
       totalPages: Math.ceil(questions.length / size),
     };
-  };
+  }, [page]);
 
-  const getEngineeringPageQuestions = () => {
+  const getEngineeringPageQuestions = useCallback(() => {
     const size = PAGE_SIZE.engineering;
     const start = page * size;
     const end = Math.min(ENGINEERING_QUESTIONS.length, start + size);
@@ -174,7 +174,7 @@ export default function IpsiiDnaPrismApp() {
       items: ENGINEERING_QUESTIONS.slice(start, end),
       totalPages: Math.ceil(ENGINEERING_QUESTIONS.length / size),
     };
-  };
+  }, [page]);
 
   const requestReportViaApi = async (
     payloadIntake: IntakeForm,
@@ -412,7 +412,7 @@ export default function IpsiiDnaPrismApp() {
       return page < totalPages - 1 ? '다음' : '리포트 보기';
     }
     return '완료';
-  }, [stage, page]);
+  }, [stage, page, getEngineeringPageQuestions, getLikertPageQuestions]);
 
   const syncLabel = useMemo(() => {
     if (syncState === 'syncing') return '시스템 연결 상태: 전송 중';

@@ -30,7 +30,7 @@ export const PrismSynthesisVisual = () => {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="text-center space-y-2">
            <span className="block text-[10px] font-black text-[#d4af37] tracking-[1em] uppercase">The Prism Spectrum</span>
-           <span className="block text-2xl font-black text-white italic tracking-tighter">"다양한 역량의 합이 당신의 아이입니다"</span>
+           <span className="block text-2xl font-black text-white italic tracking-tighter">&quot;다양한 역량의 합이 당신의 아이입니다&quot;</span>
         </div>
       </div>
     </div>

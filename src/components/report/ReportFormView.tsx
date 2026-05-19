@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { IlsDimension, ReportContent, ReportPageItem, ReportTable } from "@/lib/reportForm";
@@ -123,28 +124,6 @@ function ManseDNAVisual({ scores }: { scores: { A: number; B: number; C: number 
   );
 }
 
-function MathFlowVisual() {
-  return (
-    <div className="mt-4 rounded-xl border border-[#e2e8f0] bg-white p-6 shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[#f1f5f9] pb-3 mb-4">
-        <div className="h-5 w-1 bg-[#1e3a8a] rounded-full" />
-        <p className="text-lg font-bold text-[#1e293b]">수학 3단계 전략 구조도 (無결점 프로세스)</p>
-      </div>
-      <div className="flex items-center justify-between gap-2 mt-2">
-        {["조건 추출", "도구 선택", "연산 수행"].map((step, idx) => (
-          <div key={step} className="flex-1 flex flex-col items-center">
-            <div className="w-full rounded-lg border-2 border-[#1e3a8a] bg-[#f0f4ff] p-3 text-center shadow-sm">
-              <p className="text-[10px] font-black text-[#1e3a8a] uppercase tracking-wider">Step 0{idx + 1}</p>
-              <p className="mt-1 text-sm font-black text-[#1e293b]">{step}</p>
-            </div>
-            {idx < 2 && <div className="h-4 w-0.5 bg-[#1e3a8a] my-1 opacity-20" />}
-          </div>
-        ))}
-      </div>
-      <p className="mt-4 text-center text-xs text-[#64748b] italic">"선 구조화 후 풀이 전략으로 인지적 실수를 원천 차단합니다."</p>
-    </div>
-  );
-}
 
 function SubjectMapVisual() {
   return (
@@ -224,37 +203,6 @@ function ReadingStrategyVisual() {
   );
 }
 
-function ScienceMapVisual() {
-  return (
-    <div className="mt-4 rounded-xl border border-[#e2e8f0] bg-white p-6 shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[#f1f5f9] pb-3 mb-4">
-        <div className="h-5 w-1 bg-[#047857] rounded-full" />
-        <p className="text-lg font-bold text-[#1e293b]">과학 인과관계 도식화 (System Mapping)</p>
-      </div>
-      <div className="relative py-2">
-        <svg viewBox="0 0 800 160" className="w-full h-auto">
-          <defs>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill="#1e3a8a" />
-            </marker>
-          </defs>
-          <rect x="20" y="40" width="200" height="80" rx="12" fill="#eff6ff" stroke="#1e3a8a" strokeWidth="2" />
-          <text x="120" y="85" textAnchor="middle" fill="#1e3a8a" fontSize="16" fontWeight="800">현상(Phenomenon)</text>
-          
-          <line x1="230" y1="80" x2="280" y2="80" stroke="#1e3a8a" strokeWidth="3" markerEnd="url(#arrowhead)" />
-          
-          <rect x="300" y="40" width="200" height="80" rx="12" fill="#fff" stroke="#1e3a8a" strokeWidth="2" strokeDasharray="4 4" />
-          <text x="400" y="85" textAnchor="middle" fill="#1e293b" fontSize="16" fontWeight="800">원리(Mechanism)</text>
-          
-          <line x1="510" y1="80" x2="560" y2="80" stroke="#1e3a8a" strokeWidth="3" markerEnd="url(#arrowhead)" />
-          
-          <rect x="580" y="40" width="200" height="80" rx="12" fill="#1e3a8a" />
-          <text x="680" y="85" textAnchor="middle" fill="#fff" fontSize="16" fontWeight="800">모델(Model)</text>
-        </svg>
-      </div>
-    </div>
-  );
-}
 
 function RoadmapVisual() {
   const steps = [
@@ -424,6 +372,15 @@ function CompetitiveRankVisual({ scores }: { scores: { A: number; B: number } })
 }
 
 function PrismRadarChart({ scores, blinded = false }: { scores: { axis: string; student: number; target: number }[]; blinded?: boolean }) {
+  const qrReportId = useMemo(() => {
+    let hash = 0;
+    const str = scores.map(s => s.axis + s.student).join('');
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `PRISM-${10000 + Math.abs(hash % 90000)}`;
+  }, [scores]);
+
   const size = 400;
   const center = size / 2;
   const radius = 120;
@@ -547,7 +504,7 @@ function PrismRadarChart({ scores, blinded = false }: { scores: { axis: string; 
                 </div>
                 <div className="h-24 w-24 bg-white p-2 rounded-xl shadow-lg border border-[#e2e8f0] flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://myungni-jinro.vercel.app/consultation/apply?reportId=PRISM-${Math.floor(Math.random()*90000)+10000}`)}`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://myungni-jinro.vercel.app/consultation/apply?reportId=${qrReportId}`)}`} 
                     alt="QR Code for Consultation"
                     className="w-full h-full object-contain"
                   />
@@ -573,7 +530,7 @@ function PrismRadarChart({ scores, blinded = false }: { scores: { axis: string; 
             <p className="text-xl font-black tracking-tight">상담 신청 시 완벽해부 데이터 공개</p>
             <p className="text-[12px] font-bold text-blue-200 text-center leading-relaxed">
               본 분포도의 상세 정량 수치와 목표 대학 합격 전략은<br/>
-              1:1 대면 상담 시 '완벽 해부 분석지'를 통해 제공됩니다.
+              {"1:1 대면 상담 시 '완벽 해부 분석지'를 통해 제공됩니다."}
             </p>
           </div>
         </div>
@@ -594,6 +551,15 @@ function VisualBlock({ page, content }: { page: ReportPageItem; content: ReportC
 }
 
 export function ReportFormView({ content }: { content: ReportContent }) {
+  const documentNumber = useMemo(() => {
+    let hash = 0;
+    const str = content.studentName + content.issueDate;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash % 10000).toString();
+  }, [content.studentName, content.issueDate]);
+
   return (
     <main className="bg-[#f1f5f9] min-h-screen py-12 px-4 print:p-0 print:bg-white">
       <style jsx global>{`
@@ -706,7 +672,7 @@ export function ReportFormView({ content }: { content: ReportContent }) {
                 <div className="text-right">
                   <p className="font-black text-[#1e3a8a] mb-2">REPORT STATUS</p>
                   <p>발행일: {content.issueDate}</p>
-                  <p>문서번호: SPRM-2025-{(Math.random() * 10000).toFixed(0)}</p>
+                  <p>문서번호: SPRM-2025-{documentNumber}</p>
                   <p>유효기간: 발행일로부터 1년</p>
                 </div>
               </div>

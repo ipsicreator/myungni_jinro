@@ -24,7 +24,7 @@ export type StoredReportRow = {
 
 const DB_DIR = path.join(process.cwd(), 'data');
 const DB_PATH = path.join(DB_DIR, 'report_store.sqlite');
-const SUPABASE_TABLE = 'report_records';
+
 
 type StoreMode = 'sqlite' | 'supabase';
 
@@ -34,7 +34,7 @@ type SupabaseRecord = {
   student_name: string;
   school: string;
   grade: string;
-  created_at: string;
+  createdAt: string;
   headline: string;
 };
 
@@ -49,13 +49,13 @@ function ensureDb() {
       school TEXT NOT NULL,
       grade TEXT NOT NULL,
       source TEXT NOT NULL,
-      created_at TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
       headline TEXT NOT NULL,
       report_json TEXT NOT NULL,
       answers_json TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_report_records_student_key ON report_records(student_key);
-    CREATE INDEX IF NOT EXISTS idx_report_records_created_at ON report_records(created_at);
+    CREATE INDEX IF NOT EXISTS idx_report_records_createdAt ON report_records(createdAt);
   `);
   return db;
 }
@@ -71,48 +71,38 @@ function toStoredReportRow(row: SupabaseRecord): StoredReportRow {
     studentName: row.student_name,
     school: row.school,
     grade: row.grade,
-    createdAt: row.created_at,
+    createdAt: row.createdAt,
     headline: row.headline,
   };
 }
 
-function getStoreMode(): StoreMode {
+export function getStoreMode(): StoreMode {
   const mode = process.env.REPORT_STORE_MODE?.toLowerCase();
-  return mode === 'supabase' ? 'supabase' : 'sqlite';
+  return mode === 'sqlite' ? 'sqlite' : 'supabase';
 }
 
-function getSupabaseConfig() {
-  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ??
-    process.env.SUPABASE_ANON_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function getPocketBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_POCKETBASE_URL ?? 'https://suprima-platform-pb.fly.dev';
+}
 
-  if (!url || !key) {
-    throw new Error('Supabase configuration is missing. Check SUPABASE_URL and key env vars.');
+export async function pocketbaseRequest<T>(pathSuffix: string, init?: RequestInit): Promise<T> {
+  const url = getPocketBaseUrl();
+  const headers = new Headers(init?.headers);
+  if (init?.body && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
   }
 
-  return { url, key };
-}
-
-async function supabaseRequest<T>(pathSuffix: string, init?: RequestInit): Promise<T> {
-  const { url, key } = getSupabaseConfig();
-  const headers = new Headers(init?.headers);
-  headers.set('apikey', key);
-  headers.set('Authorization', `Bearer ${key}`);
-  if (init?.body) headers.set('Content-Type', 'application/json');
-
-  const res = await fetch(`${url}/rest/v1/${pathSuffix}`, {
+  const res = await fetch(`${url}/api/${pathSuffix}`, {
     ...init,
     headers,
   });
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Supabase request failed (${res.status}): ${text}`);
+    throw new Error(`PocketBase request failed (${res.status}): ${text}`);
   }
 
-  if (res.status === 204) return [] as T;
+  if (res.status === 204) return {} as T;
   return (await res.json()) as T;
 }
 
@@ -124,7 +114,7 @@ function saveReportRecordLocal(input: StoredReportInput): StoredReportRow {
 
   const stmt = db.prepare(`
     INSERT INTO report_records (
-      report_id, student_key, student_name, school, grade, source, created_at, headline, report_json, answers_json
+      report_id, student_key, student_name, school, grade, source, createdAt, headline, report_json, answers_json
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
@@ -154,48 +144,41 @@ function saveReportRecordLocal(input: StoredReportInput): StoredReportRow {
   };
 }
 
-async function saveReportRecordSupabase(input: StoredReportInput): Promise<StoredReportRow> {
+async function saveReportRecordPocketBase(input: StoredReportInput): Promise<StoredReportRow> {
   const reportId = crypto.randomUUID();
   const createdAt = input.createdAt ?? new Date().toISOString();
   const studentKey = toStudentKey(input.intake);
 
-  const payload = [
-    {
-      report_id: reportId,
-      student_key: studentKey,
-      student_name: input.intake.name,
-      school: input.intake.school,
-      grade: input.intake.grade,
-      source: input.source,
-      created_at: createdAt,
-      headline: input.report.headline,
-      report_json: input.report,
-      answers_json: input.answers,
-    },
-  ];
+  const payload = {
+    report_id: reportId,
+    student_key: studentKey,
+    student_name: input.intake.name,
+    school: input.intake.school,
+    grade: input.intake.grade,
+    source: input.source,
+    createdAt: createdAt,
+    headline: input.report.headline,
+    report_json: input.report,
+    answers_json: input.answers,
+  };
 
-  const rows = await supabaseRequest<SupabaseRecord[]>(
-    `${SUPABASE_TABLE}?select=report_id,student_key,student_name,school,grade,created_at,headline`,
+  const row = await pocketbaseRequest<SupabaseRecord>(
+    `collections/myungni_next_report_records/records`,
     {
       method: 'POST',
-      headers: { Prefer: 'return=representation' },
       body: JSON.stringify(payload),
     }
   );
 
-  const row = rows[0];
-  if (!row) {
-    throw new Error('Supabase insert succeeded but no row was returned.');
-  }
   return toStoredReportRow(row);
 }
 
 function listRecentReportsLocal(limit = 20): StoredReportRow[] {
   const db = ensureDb();
   const stmt = db.prepare(`
-    SELECT report_id, student_key, student_name, school, grade, created_at, headline
+    SELECT report_id, student_key, student_name, school, grade, createdAt, headline
     FROM report_records
-    ORDER BY created_at DESC
+    ORDER BY createdAt DESC
     LIMIT ?
   `);
   const rows = stmt.all(limit) as Array<{
@@ -204,25 +187,33 @@ function listRecentReportsLocal(limit = 20): StoredReportRow[] {
     student_name: string;
     school: string;
     grade: string;
-    created_at: string;
+    createdAt: string;
     headline: string;
   }>;
   db.close();
   return rows.map((row) => toStoredReportRow(row));
 }
 
-async function listRecentReportsSupabase(limit = 20): Promise<StoredReportRow[]> {
+type PocketBaseListResponse<T> = {
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  items: T[];
+};
+
+async function listRecentReportsPocketBase(limit = 20): Promise<StoredReportRow[]> {
   const safeLimit = Math.max(1, Math.min(200, limit));
-  const rows = await supabaseRequest<SupabaseRecord[]>(
-    `${SUPABASE_TABLE}?select=report_id,student_key,student_name,school,grade,created_at,headline&order=created_at.desc&limit=${safeLimit}`
+  const response = await pocketbaseRequest<PocketBaseListResponse<SupabaseRecord>>(
+    `collections/myungni_next_report_records/records?sort=-createdAt&perPage=${safeLimit}`
   );
-  return rows.map((row) => toStoredReportRow(row));
+  return response.items.map((row) => toStoredReportRow(row));
 }
 
 export async function saveReportRecord(input: StoredReportInput): Promise<StoredReportRow> {
-  return getStoreMode() === 'supabase' ? saveReportRecordSupabase(input) : saveReportRecordLocal(input);
+  return getStoreMode() === 'supabase' ? saveReportRecordPocketBase(input) : saveReportRecordLocal(input);
 }
 
 export async function listRecentReports(limit = 20): Promise<StoredReportRow[]> {
-  return getStoreMode() === 'supabase' ? listRecentReportsSupabase(limit) : listRecentReportsLocal(limit);
+  return getStoreMode() === 'supabase' ? listRecentReportsPocketBase(limit) : listRecentReportsLocal(limit);
 }

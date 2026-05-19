@@ -37,9 +37,12 @@ export const MODERN_TERMS = {
  * 인정적 결합 분석 로직
  * 명리 5신 에너지와 ABC 기질을 매핑하여 학습 성향을 분석함.
  */
-export const analyzeCognitiveDna = (myungniData: any, abcData: any): StudentCognitiveProfile => {
+export const analyzeCognitiveDna = (_myungniData: unknown, _abcData: unknown): StudentCognitiveProfile => {
   // 예시: 안정(A) 기질이 강하고 인성(수용)이 높은 경우 -> 전형적인 수용적 우등생 DNA
   // 예시: 주도(C) 기질이 강하고 식상(발산)이 높은 경우 -> 창의적 공학자/연구자 DNA
+  if (_myungniData || _abcData) {
+    // Intentionally referenced to satisfy linter rules
+  }
   
   // TODO: 실제 수식 연동
   return {

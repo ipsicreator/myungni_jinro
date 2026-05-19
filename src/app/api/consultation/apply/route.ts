@@ -1,25 +1,28 @@
 import { NextResponse } from 'next/server';
+import { getStoreMode, pocketbaseRequest } from '@/lib/reportStore';
 
-// This API route mimics the logic in 2ndapp.py for handling consultation requests
+// This API route handles consultation requests and persists them to PocketBase on Fly.io
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { reportId, parentName, phone, question, preferredDate } = body;
 
-    // In a real implementation with Supabase:
-    /*
-    const { data, error } = await supabase
-      .from('consultation_requests')
-      .insert([
-        { 
-          report_id: reportId, 
-          parent_name: parentName, 
-          phone, 
-          question, 
-          preferred_date: preferredDate 
-        }
-      ]);
-    */
+    // If active storage mode is cloud ('supabase'), write to PocketBase
+    if (getStoreMode() === 'supabase') {
+      const payload = {
+        report_id: reportId || 'transient-unknown',
+        parent_name: parentName || '학부모',
+        phone: phone || '010-0000-0000',
+        question: question || '상담을 신청합니다.',
+        preferred_date: preferredDate ? new Date(preferredDate).toISOString() : new Date().toISOString(),
+        status: 'pending',
+      };
+
+      await pocketbaseRequest('collections/myungni_next_consultation_requests/records', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    }
 
     console.log("Saving Consultation Request to DB:", {
       reportId,

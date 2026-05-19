@@ -78,7 +78,11 @@ function ConsultationApplyForm() {
 
   useEffect(() => {
     if (reportId) {
-      setFormData(prev => ({ ...prev, reportId }));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormData(prev => {
+        if (prev.reportId === reportId) return prev;
+        return { ...prev, reportId };
+      });
     }
   }, [reportId]);
 
@@ -125,8 +129,8 @@ function ConsultationApplyForm() {
 
           <div className="bg-[#f0f9ff] p-6 rounded-2xl border border-[#bae6fd] mb-8">
             <p className="text-[12px] font-black text-[#0369a1] leading-relaxed mb-4">
-              "상담 시 이 분포도의 각 축이 의미하는 기질적 충돌 해결책과<br/>
-              생기부 기록 차별화 전략을 완벽히 해부해 드립니다."
+              &quot;상담 시 이 분포도의 각 축이 의미하는 기질적 충돌 해결책과<br/>
+              생기부 기록 차별화 전략을 완벽히 해부해 드립니다.&quot;
             </p>
             <div className="pt-4 border-t border-[#bae6fd] text-left">
               <p className="text-[11px] font-black text-[#0369a1] uppercase mb-1">Contact Information</p>
