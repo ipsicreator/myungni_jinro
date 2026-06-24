@@ -52,7 +52,7 @@ export default function QuestionnairePage() {
           </header>
           <div className="p-6">
             <h2 className="text-3xl font-extrabold text-[#1f326a]">기질 진단 문항</h2>
-            <p className="mt-3 text-lg leading-8 text-[#41537f]">아래 문항에 1~5점으로 응답해 주세요.</p>
+            <p className="mt-3 text-lg leading-8 text-[#41537f]">아래 문항에 1점부터 5점까지 응답해 주세요.</p>
             <div className="mt-5 rounded-lg border border-[#d7deea] bg-white p-4">
               <p className="text-sm font-semibold text-[#6b7da5]">진단 대상</p>
               <p className="mt-1 text-2xl font-black text-[#1f326a]">{form.studentName}</p>
@@ -94,9 +94,9 @@ export default function QuestionnairePage() {
 
         <aside className="bg-[#f5f7fb] p-6">
           <h3 className="text-xl font-bold text-[#1f326a]">다음 단계</h3>
-          <p className="mt-2 text-base text-[#67789f]">응답 완료 후 결과 화면으로 이동</p>
+          <p className="mt-2 text-base text-[#67789f]">응답 완료 후 결과 화면으로 이동합니다.</p>
           <p className="mt-2 text-sm font-semibold text-[#41537f]">
-            진행률: {completedCount}/{PRISM_QUESTIONS.length}
+            진행률 {completedCount}/{PRISM_QUESTIONS.length}
           </p>
           {errorMessage ? <p className="mt-2 text-sm font-semibold text-[#b42318]">{errorMessage}</p> : null}
           <button

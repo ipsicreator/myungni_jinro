@@ -54,15 +54,14 @@ export default function NewConsultPage() {
           <div className="p-6">
             <h2 className="text-3xl font-extrabold text-[#1f326a]">진단 안내</h2>
             <p className="mt-3 text-lg leading-8 text-[#41537f]">
-              학생 기본 정보를 입력하면 기질 분석, 학습 성향, 공학 적합도,
-              진로 리포트로 이어지는 통합 진단을 시작할 수 있습니다.
+              학생 기본 정보를 입력하면 기질 분석, 학습 성향, 공학 적합도까지 연결되는 통합 진단이 시작됩니다.
             </p>
           </div>
         </aside>
 
         <section className="flex flex-col border-r border-[#d6dbe6] bg-white">
           <header className="grid h-[118px] place-items-center border-b border-[#2a3f77] bg-gradient-to-r from-[#132964] via-[#20397c] to-[#132964]">
-            <h1 className="text-5xl font-extrabold tracking-tight text-white">입시DNA프리즘</h1>
+            <h1 className="text-5xl font-extrabold tracking-tight text-white">입시 DNA 프리즘</h1>
           </header>
 
           <form
@@ -115,7 +114,7 @@ export default function NewConsultPage() {
               </label>
             </div>
             <label className="grid gap-1">
-              <span className="text-sm font-semibold text-[#3e4f76]">출생시각</span>
+              <span className="text-sm font-semibold text-[#3e4f76]">출생 시간</span>
               <input className="h-10 rounded-md border border-[#cfd5e0] px-3" placeholder="HH:MM" value={form.birthTime} onChange={setField("birthTime")} />
             </label>
             {errorMessage ? <p className="text-sm font-semibold text-[#b42318]">{errorMessage}</p> : null}
@@ -153,4 +152,3 @@ export default function NewConsultPage() {
     </main>
   );
 }
-

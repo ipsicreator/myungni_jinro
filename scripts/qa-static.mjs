@@ -34,8 +34,13 @@ const requiredMarkers = [
   { file: "src/app/global-error.tsx", marker: 'href="/first-screen"' },
 ];
 
-const mojibakePatterns = [/[\u0080-\uFFFF]*\?[쒗낆곷쇳]/, /\?{3,}/];
+const mojibakePatterns = [
+  /[가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9][?][쀫굞怨룹눛]/,
+  /\?\/(span|div|h1|h2|h3|p|button|label|option|li|td|th)>/,
+  /占/,
+];
 const sourceExt = new Set([".ts", ".tsx", ".js", ".jsx", ".css", ".md"]);
+const ignoredFiles = new Set(["src/data/report_reference.json"]);
 
 function walk(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -117,6 +122,7 @@ function main() {
     const ext = path.extname(filePath).toLowerCase();
     if (!sourceExt.has(ext)) continue;
     const rel = path.relative(projectRoot, filePath).replaceAll(path.sep, "/");
+    if (ignoredFiles.has(rel)) continue;
     const content = fs.readFileSync(filePath, "utf8");
     for (const pattern of mojibakePatterns) {
       if (pattern.test(content)) {

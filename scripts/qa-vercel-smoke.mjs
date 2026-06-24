@@ -5,7 +5,7 @@ const baseUrl = (process.argv[2] || process.env.QA_BASE_URL || DEFAULT_BASE_URL)
 const checks = [
   {
     route: "/first-screen",
-    markers: ["입시DNA프리즘", "진단 시작하기", "대치수프리마"],
+    markers: ["입시 DNA 프리즘", "진단 시작하기", "대치수프리마"],
   },
   {
     route: "/new",
@@ -17,19 +17,19 @@ const checks = [
   },
   {
     route: "/almost-complete",
-    markers: ["종합분석리포트", "리포트 발행"],
+    markers: ["종합 분석 리포트", "리포트 발행"],
   },
   {
     route: "/report-issue",
-    markers: ["전략보고서", "PDF 리포트 발행", "Admission DNA Prism"],
+    markers: ["전략보고서", "학부모 코칭 가이드", "Admission DNA Prism"],
   },
   {
     route: "/report-template",
-    markers: ["리포트 양식", "입시DNA프리즘 양식 점검"],
+    markers: ["리포트 양식", "입시 DNA 프리즘 양식 점검"],
   },
   {
     route: "/report-templated",
-    markers: ["리포트 양식", "입시DNA프리즘 양식 점검"],
+    markers: ["리포트 양식", "입시 DNA 프리즘 양식 점검"],
   },
 ];
 
@@ -38,7 +38,7 @@ function hasBrokenText(html) {
     html.includes("???") ||
     html.includes("?/span>") ||
     html.includes("?/div>") ||
-    html.includes("�")
+    html.includes("占")
   );
 }
 

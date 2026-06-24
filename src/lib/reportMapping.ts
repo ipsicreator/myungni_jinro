@@ -1,4 +1,6 @@
-﻿export type IntakeForm = {
+import { ADMISSION_GUIDE_ROWS, summarizeAdmissionGuideRows } from '@/data/admissionGuideSource';
+
+export type IntakeForm = {
   name: string;
   school: string;
   grade: string;
@@ -57,6 +59,18 @@ export type StrategicRouting = {
   parentCoachingMode: string;
 };
 
+export type AdmissionGuideDetail = {
+  admissionMethod: string;
+  minimumRequirement: string;
+  requiredDocuments: string;
+  duplicateSupport: string;
+  regionalType: string;
+  gradeWeight: string;
+  subjectReflect: string;
+  careerElectives: string;
+  resultGradeCompetition: string;
+};
+
 export type MappedReport = {
   title: string;
   subtitle: string;
@@ -69,6 +83,7 @@ export type MappedReport = {
     manseSecondary: string;
   };
   routing: StrategicRouting;
+  admissionGuide: AdmissionGuideDetail;
   sections: ReportSection[];
   recommendations: string[];
 };
@@ -435,6 +450,22 @@ function buildStrategicRouting(
     parentCoachingMode,
   };
 }
+
+function buildAdmissionGuideDetail(): AdmissionGuideDetail {
+  const summary = summarizeAdmissionGuideRows(ADMISSION_GUIDE_ROWS);
+  return {
+    admissionMethod: summary.admissionMethod,
+    minimumRequirement: summary.minimumRequirement,
+    requiredDocuments: summary.requiredDocuments,
+    duplicateSupport: summary.duplicateSupport,
+    regionalType: summary.regionalType,
+    gradeWeight: summary.gradeWeight,
+    subjectReflect: summary.subjectReflect,
+    careerElectives: summary.careerElectives,
+    resultGradeCompetition: summary.resultGradeCompetition,
+  };
+}
+
 export function buildMappedReport(intake: IntakeForm, answers: SurveyAnswers): MappedReport {
   const abcTotals = axisTotals(ABC_QUESTIONS, answers.abc);
   const learningTotals = axisTotals(LEARNING_QUESTIONS, answers.learning);
@@ -447,6 +478,7 @@ export function buildMappedReport(intake: IntakeForm, answers: SurveyAnswers): M
   const abcDominant = ABC_LABEL[abcKey] ?? '안정-체계형';
   const learningDominant = LEARNING_LABEL[learningKey] ?? '독립형';
   const routing = buildStrategicRouting(manse, abcKey, learningKey, engineering);
+  const admissionGuide = buildAdmissionGuideDetail();
   const name = intake.name || '학생';
 
   const sections: ReportSection[] = [
@@ -496,7 +528,22 @@ export function buildMappedReport(intake: IntakeForm, answers: SurveyAnswers): M
       ],
     },
     {
-      title: '6. 학부모 코칭 가이드',
+      title: '6. 입시요강 확인 항목',
+      body: [
+        `전형방법: ${admissionGuide.admissionMethod}`,
+        `최저학력기준: ${admissionGuide.minimumRequirement}`,
+        `필요서류: ${admissionGuide.requiredDocuments}`,
+        `복수지원: ${admissionGuide.duplicateSupport}`,
+        `광역/기초: ${admissionGuide.regionalType}`,
+        `학년별 반영비율: ${admissionGuide.gradeWeight}`,
+        `반영과목: ${admissionGuide.subjectReflect}`,
+        `진로선택과목: ${admissionGuide.careerElectives}`,
+        `입시결과등급/경쟁률: ${admissionGuide.resultGradeCompetition}`,
+        `기준 데이터 행 수: ${ADMISSION_GUIDE_ROWS.length}`,
+      ],
+    },
+    {
+      title: '7. 학부모 코칭 가이드',
       body: [
         routing.parentCoachingMode,
         '결과 중심 질문 대신 과정 중심 질문(근거·순서·오답 원인)을 사용합니다.',
@@ -517,19 +564,16 @@ export function buildMappedReport(intake: IntakeForm, answers: SurveyAnswers): M
       manseSecondary: manse.secondaryLabel,
     },
     routing,
+    admissionGuide,
     sections,
     recommendations: [
       `개인화 우선 실행: ${manse.focusAction}`,
       `고입 실행 포인트: ${routing.highSchoolType}`,
       `대입 학과 검토: ${routing.collegeMajorTrack}`,
+      `입시요강 확인: ${admissionGuide.requiredDocuments} / ${admissionGuide.resultGradeCompetition}`,
       `학부모 코칭 실행: ${routing.parentCoachingMode}`,
       '주 1회 루틴 점검: 과목별 목표-실행-피드백 루프를 고정합니다.',
       '오답 분석 표준화: 원인 분류와 재발 방지 규칙을 문서화합니다.',
     ],
   };
 }
-
-
-
-
-

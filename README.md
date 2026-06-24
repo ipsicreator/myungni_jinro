@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# myungni_next
 
-## Getting Started
+대치수프리마 입시&코칭센터의 `입시 DNA 프리즘` 진단 웹앱입니다.
 
-First, run the development server:
+## 주요 경로
+
+- `/first-screen`: 첫 화면
+- `/new`: 기본 정보 입력
+- `/questionnaire`: 기질 진단 문항
+- `/almost-complete`: 리포트 생성 직전 안내
+- `/report-issue`: 종합 리포트 렌더링
+- `/report-template`: 리포트 양식 확인
+- `/consultation/apply`: 상담 신청
+
+## 실행
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 `http://localhost:3000`을 열면 `/first-screen`으로 리다이렉트됩니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 검증
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm.cmd run lint
+npm run build
+```
 
-## Learn More
+PowerShell 실행 정책 때문에 `npm`이 막히는 환경에서는 `npm.cmd`를 사용합니다.
 
-To learn more about Next.js, take a look at the following resources:
+## 데이터 저장
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 기본 저장 모드: PocketBase
+- 기본 엔드포인트: `https://suprima-platform-pb.fly.dev`
+- 보고서 컬렉션: `myungni_next_report_records`
+- 상담 신청 컬렉션: `myungni_next_consultation_requests`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+저장 로직은 [src/lib/reportStore.ts](C:\Users\chris\Desktop\새 폴더\myungni_next\src\lib\reportStore.ts)에 있습니다.
 
-## Deploy on Vercel
+## 참고
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/data/report_reference.json`은 스크립트 추출용 참조 데이터입니다.
+- 실제 런타임 진단 화면과 리포트 구성의 핵심 로직은 `src/app/**`, `src/components/report/**`, `src/lib/reportForm.ts`, `src/lib/reportMapping.ts`에 있습니다.
